@@ -233,12 +233,12 @@ print(bin숫자)
        ==> 출력: 0b1111010
 
 print(oct숫자)
-
-      ==> 출력: 
+  e.g. print(oct(122))
+      ==> 출력: 0o172
 
 print(hex숫자)
-
-       ==> 출력: 
+  e.g. print(hex(122))
+       ==> 출력: 0x7a
 
 
 
