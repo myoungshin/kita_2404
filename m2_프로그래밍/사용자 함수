@@ -44,4 +44,61 @@
               따라서 의도와 다른 값이 나오게 됨
 
 
+============================================
 
+<< zip 함수 >>
+
+여러 개의 이터러블(리스트, 튜플 등)을 인자로 받아, 동일한 인덱스에 있는 요소들을 하나의 튜플로 묶어서 이터레이터를 반환
+데이터를 병렬로 처리할 때 유용
+일반적인 형식: 
+  변수명2=zip(이터러블1, 이터러블2)
+
+  e.g.
+  list1=[1,2,3,4]
+  list2=['a','b','c','d']
+  zipped=zip(list1,list2) # list1과 list2의 동일 인덱스들을 하나로 튜플로 묶어줌
+  print(list(zipped))
+
+  e.g.
+  # Q. 두 개의 리스트(이름과 성)를 사용하여 각 사람의 전체 이름을 생성하세요.
+  first_names=['John','Jane','Corey','Travis']
+  last_names=['Doe','Smith','Turner','williams']
+  
+  full_names=[first+" "+last for first,last in zip(first_names, last_names)]
+  print(full_names)
+
+
+============================================
+
+<< 파이썬의 random 모듈 >>
+난수 생성을 위한 다양한 함수가 있음
+아래처럼 random을  import한 후 사용 가능
+  import random
+random에서 특정 함수만 불러와 사용하는 것도 가능:
+  from random import 사용할 함수명
+    e.g. from random import shuffle
+
+- 기본 난수 생성: 
+random.random()
+    ==> 0과 1 사이의 무작위 부동소수점 숫자를 반환
+
+- 범위 지정 난수 생성: 
+random.randint(시작점,끝점)
+    ==> 시작점과 끝점 사이의 무작위 정수를 반환(끝점 포함)
+random.randrange(시작점, 끝점, [스텝])
+    ==> 지정된 범위에서 무작위 정수를 반환. step을 설정하여 수의 간격을 조정할 수 있음
+
+- 시퀀스용 함수:
+random.choice(sequence)
+    ==> 주어진 시퀀스(리스트, 튜플 등)에서 무작위로 아이템을 선택하여 반환.
+random.shuffle(x[, random])
+    ==> 리스트의 항목들을 무작위로 섞는다. 
+    ===> random은 섞기를 위한 함수를 커스텀할 때 사용.
+random.sample(population, k)
+    ==> 주어진 시퀀스에서 무작위로 k개의 항목을 뽑아 새 리스트로 반환.
+
+- 분포 기반 난수 생성:
+random.uniform(a, b)
+    ==> a와 b 사이의 무작위 부동소수점 숫자를 균등 분포로 반환.
+random.gauss(mu, sigma)
+    ==> 평균 mu와 표준편차 sigma를 가지는 정규 분포에서 난수를 반환.
