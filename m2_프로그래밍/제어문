@@ -57,6 +57,7 @@ if문:
   - 정해진 range 안에서 반복
   - 일반적인 형식:
       for ~ in ~ :
+        실행할 내용
 
 *** 딕셔너리에서 value값만 추출하는 방법: 
       d={'a':97, 'b':98, 'c':99}
@@ -67,8 +68,49 @@ while문:
   - 특정 조건에 맞을 때까지 무한 반복
   - 일반적인 형식:
       while 조건:
+        실행할 내용
+
+반복문 스킵 및 탈출:
+반복문이 돌 때 특정 조건에서 해당 실행문을 스킵하고 싶다면 continue를,
+특정 조건에서 반복문을 종료하고 싶다면 break를 사용.
+  for문의 break 사용:
+  e.g. 
+      for i in range(1,11):
+        if i < 6:
+           print(i, end=' ')
+      else:
+           break
+
+  for문의 continue 사용:
+  e.g. 
+      for i in number:
+        if i==5:
+          continue
+        if i%5==0:
+          print(i, end=' ')
 
 
+============================================
 
+<< 예외 처리 >>
+코드를 실행하다 에러가 떴을 때 에러 페이지 대신 개발자의 의도대로 실해되도록 하는 방법
+일반적인 형식:
+  try:
+    실행문 
+  except 에러명:
+    에러가 떴을 때 실행할 내용
 
+  e.g.:
+  while True: 
+    try:
+        number=int(input("정수를 입력하세요 : "))
+        if number%2==1:
+            print(f"입력한 숫자 {number}은/는 홀수입니다")
+        else:
+            print(f"입력한 숫자 {number}은/는 짝수입니다")
+        break 
+    except ValueError:
+        print("정수가 아닌 값이 입력되었습니다. 정수로 다시 입력하세요.")
+  ==> 정수가 입력되었으면 홀/짝 판별하고 끝남
+      정수가 아닌 다른 것이 입력된 경우 에러 메세지가 뜨고 다시 정수를 입력하도록 유도
 
