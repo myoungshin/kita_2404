@@ -53,7 +53,7 @@ if 안에 if를 넣어 중첩하여 사용 가능.
     ["success" if score>=60 else "failure" ]
 
 << 반복문 >>
-if문: 
+for문: 
   - 정해진 range 안에서 반복
   - 일반적인 형식:
       for ~ in ~ :
