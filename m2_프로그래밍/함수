@@ -23,6 +23,7 @@
 표준 라이브러리에 포함ehls 모듈과 함수를 가리키는 것으로 모듈을 import하여 사용
 파이썬 표준 라이브러리의 os, sys, math, random, datetime 등의 모듈에는 다양한 외장 함수가 포함
 ==> 표준 라이브러리는 별도 설치 불필요
+    *** 표준 라이브러리 공식 페이지: https://docs.python.org/ko/3.10/library/index.html
 ==> 사용 필요 시 아래처럼 import + 함수명 써야 함
   e.g.
   import random
@@ -82,11 +83,29 @@ lambda 키워드를 사용하여 한 줄로 함수를 정의
 주로 간단한 연산이 필요할 때 사용
 재활용 가능
 
-e.g. 
-  multiply=lambda x,y: x*y # : 뒤에 붙은게 기능, 그 앞에 붙은게 변수
-  print(multiply(3,4)) # 출력: 12
+기본 형태:
+  변수명=사용할 함수(lambda 임의변수명:실행할 내용, 참조할 자료)
 
+  e.g. 
+    multiply=lambda x,y: x*y # : 뒤에 붙은게 기능, 그 앞에 붙은게 변수
+    print(multiply(3,4)) # 출력: 12
+  e.g. 
+    numbers=[1,2,3,4,5]
+    squared_numbers=map(lambda x:x*x, numbers)
+    print(list(squared_numbers))
+      ==> 결과 : [1, 4, 9, 16, 25]
+  e.g. 
+    filtered_number=filter(lambda x:x%2==0,numbers)
+    print(list(filtered_number))
+      ==> 결과 : [2, 4]
 
+  e.g.
+    words = ["hello", "world", "python", "map"]
+    words_upper=map(lambda x:x.upper(), words)
+    print(list(words_upper))
+      ==> 결과 : ['HELLO', 'WORLD', 'PYTHON', 'MAP']
+
+============================================
 ============================================
 
 << zip 함수 >>
