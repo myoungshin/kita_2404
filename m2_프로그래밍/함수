@@ -129,6 +129,222 @@ lambda 키워드를 사용하여 한 줄로 함수를 정의
   full_names=[first+" "+last for first,last in zip(first_names, last_names)]
   print(full_names)
 
+============================================
+
+<< map 함수 >>
+여러 개의 데이터를 받아서 각각의 요소에 함수를 적용한 결과를 반환하는 내장 함수
+리스트, 튜플 등의 반복 가능한(iterable) 객체를 입력으로 받을 수 있음
+
+기본 형식:
+   map(function,iterable 1, ..., iterable n)
+   e.g.
+   words = ["hello", "world", "python", "map"]
+   upper_words=list(map(str.upper, words)) # str.upper는 문자열의 모든 문자를 대문자화 시키는 메서드
+   print(upper_words)
+   ==> 결과: ['HELLO', 'WORLD', 'PYTHON', 'MAP']
+
+============================================
+
+<< title 함수 >>
+입력된 영문의 각 단어의 첫 알파벳을 대문자화 시켜줌
+기본 형식: 
+   변수명1=변수명2.title()
+   e.g.
+      wiyname=input('이름을 영어로 입력하세요 : ')
+      txt=wiyname.title()
+      print(f'당신의 정식 영문 이름은 {txt}입니다')
+      ==> 결과 : 이름을 영어로 입력하세요 : tessa rose
+                 당신의 정식 영문 이름은 Tessa Rose입니다
+
+============================================
+
+<< capitalize 함수 >>
+문자열의 첫번째 문자만 대문자로, 나머지는 소문자로 반환해줌
+
+기본 형식: 
+변수명1=변수명2.capitalize()
+   e.g.
+   txt1='A lot of Things occur each day.'
+   ret3=txt1.title()
+   ret4=txt1.capitalize()
+   print(ret3)
+   print(ret4)
+   ==> 결과 : A Lot Of Things Occur Each Day.
+   ==> 결과 : A lot of things occur each day.
+
+============================================
+
+<< strip 함수 >>
+문자열에서 공백을 제거하는 함수
+좌측, 우측, 양측의 공백 제거 가능
+
+기본 형식:
+   좌측 공백 제거:
+   변수명1=변수명2.lstrip()
+   
+   우측 공백 제거:
+   변수명1=변수명2.rstrip()
+   
+   양측 공백 제거:
+   변수명1=변수명2.strip()
+      e.g.
+      txt='   양쪽에 공백이 있는 문자열입니다.   '
+      ret1=txt.lstrip() # 왼쪽 공백 제거
+      ret2=txt.rstrip() # 오른쪽 공백 제거
+      ret3=txt.strip() # 양쪽 공백 제거
+      print('<'+ret1+'>')
+      print('<'+ret2+'>')
+      print('<'+ret3+'>')
+
+============================================
+
+<< join 함수 >>
+
+문자열을 이어주거나 혹은 특정 문자로 결합시켜줌
+
+기본 형식:
+   변수명1='조인시킬 문자/기호'.join(변수명2)
+   e.g. 
+   loglist=['2016/08/26 10:12:11', '200','OK', '이 또한 지나가리라']
+   bond=':'
+   log=':'.join(loglist)
+   print(log)
+   ==> 결과 : 2016/08/26 10:12:11:200:OK:이 또한 지나가리라
+
+   e.g. 공백 없이 문자들 붙이기:
+   변수명=''.join(글자 붙일 변수명) 
+   *** for문에서 각 문자별로 받을 때 사용 가능
+
+============================================
+
+<< replace 함수 >>
+특정 문자열을 다른 문자열로 바꿔줌
+
+기본 형식:
+   변수명1=변수명2.replace('기존 문자','바꿔줄 문자')
+   e.g.
+   txt='My password is 1234'
+   ret1=txt.replace('1','0')
+   ret2=txt.replace('1','python')
+   
+   print(ret1)
+   print(ret2)
+   ==> 결과 : My password is 0234
+   ==> 결과 : My password is python234
+
+   e.g.
+   txt2='매일 많은 일들이 일어납니다.'
+   ret3=txt2.replace("많은 일들이", "아침 일찍")
+   print(ret3)
+   ==> 결과 : 매일 아침 일찍 일어납니다.
+
+============================================
+
+<< clear 함수 >>
+리스트 안의 값을 전부 비워줌
+
+기본 형식: 
+   변수명.clear()
+   e.g. 
+   list1=[0,1,2,3,4,5,6]
+   list1.clear()
+   print(list1)
+   ==> 결과 : []
+
+============================================
+
+<< chr 함수 >>
+문자 코드값을 (아스키 코드) 문자로 반환해주는 함수
+
+기본 형식:
+변수명1=chr(변수명2)
+   e.g. 
+   val=int(input('문자 코드값을 입력하세요 : '))
+   ch=chr(val)
+   print('코드값: %d 문자: %s' %(val, ch))
+   ==> 결과 : 문자 코드값을 입력하세요 : 65
+   ==> 결과 : 코드값: 65 문자: A
+
+============================================
+
+<< isalpha 함수 >>
+문자열이 문자인지 검사해줌
+문자열로만 이루어졌을 경우 True, 문자 외의 것이 섞여 있을 경우 False를 반환
+
+기본 형식:
+변수명1=변수명2.isalpha()
+   e.g.
+   txt1='A'
+   txt2='안녕'
+   txt3='Warcraft Three'
+   txt4='3PO'
+   ret1=txt1.isalpha()
+   ret2=txt2.isalpha()
+   ret3=txt3.isalpha()
+   ret4=txt4.isalpha()
+   print(ret1) # 문자만
+   print(ret2) # 문자만
+   print(ret3) # 문자+공백
+   print(ret4) # 문자+숫자
+   ==> 결과 : True
+   ==> 결과 : True
+   ==> 결과 : False
+   ==> 결과 : False
+
+============================================
+
+<< isdigit 함수 >>
+문자열이 숫자인지 검사 
+숫자만 있을 경우 True, 숫자 외의 것이 섞여 있을 경우 False를 반환
+
+기본 형식:
+변수명1=변수명2.isdigit()
+   e.g.
+   txt1='010-1234-5678'
+   txt2='R2D2'
+   txt3='1212'
+   ret1=txt1.isdigit() # 숫자+특수문자
+   ret2=txt2.isdigit() # 숫자+문자
+   ret3=txt3.isdigit() # 숫자만
+   print(ret1)
+   print(ret2)
+   print(ret3)
+   ==> 결과 : False
+   ==> 결과 : False
+   ==> 결과 : True
+
+============================================
+
+<< isalnum 함수 >>
+문자열이 문자 혹은 숫자인지 검사
+영어, 한글 혹은 숫자로 되어 있다면 True, 아니라면 False를 반환
+
+기본 형식:
+변수명1=변수명2.isalnum()
+   e.g.
+   txt1='안녕하세요?'
+   txt2='1. Title-제목을 넣으세요'
+   txt3='3피오R2D2'
+   txt1_test=txt1.isalnum() # 문자+특수문자
+   txt2_test=txt2.isalnum() # 숫자+특수문자+공백+문자
+   txt3_test=txt3.isalnum() # 숫자+문자
+   print(txt1_test, txt2_test, txt3_test)
+   ==> 결과 : False False True
+
+============================================
+
+
+
+
+============================================
+
+
+
+
+============================================
+
+
+
 
 ============================================
 
@@ -167,8 +383,5 @@ random.gauss(mu, sigma)
 
 ============================================
 
-.join( ) 함수
-문자열을 붙여주는 함수
-- 공백 없이 문자들 붙이기 :
-      변수명=''.join(글자 붙일 변수명) # for문에서 각 문자별로 받을 때 사용
+
 
