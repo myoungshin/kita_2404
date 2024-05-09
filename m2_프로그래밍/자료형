@@ -221,6 +221,37 @@ f-string 활용하여 출력시 정렬 및 소수점 자리 제한하는 방법�
          f'{y:10.4f}
             ==> 출력:     3.4213
 
+문자열 정렬도 위와 같은 형식으로 가능
+- {변수명 : < 숫자 } ==> 좌측기준으로 '숫자'만큼 띄우기 == 좌측 기준으로 우측에 공백이 생김
+- {변수명 : > 숫자 } ==> 우측기준으로 '숫자'만큼 띄우기 == 우측 기준으로 좌측에 공백이 생김
+
+    e.g.
+    name='John'
+    age=23
+    balance=1234.567
+    
+    # 문자열 정렬
+    formatted_string=f"{name:<10} is {age:>3} years old." 
+    print(formatted_string)
+    ==> 결과 : 
+        John       is  23 years old.
+
+    # 숫자 정밀도 및 포맷
+    formatted_number=f"{balance:.2f}" # .xf ==> 소수 x점만큼 보여주기
+    print(formatted_number)
+    ==> 결과 :
+        1234.57
+    formatted_number=f"{balance:>20.2f}" 
+    # >y.xf ==> 총 y자리수만큼 보여주되, 소수는 x점만. 정렬은 우측을 기준으로 
+    print(formatted_number)
+    ==> 결과 :
+                     1234.57
+    
+    # 숫자 자리수 채우기
+    formatted_number_padded=f"{age:03}" # 전체 자리수 3자리까지만, 빈 자리는 0으로 채우기
+    print(formatted_number_padded) # '023'
+    ==> 결과 :
+        023
 
 ============================================
 
