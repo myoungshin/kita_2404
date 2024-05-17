@@ -1,0 +1,128 @@
+<< Oracle SQL Developer >>
+명령어는 대소문자 상관없음
+
+===============================================================
+
+[ User 만들기 ]
+
+DROP USER c##md CASCADE;
+CREATE USER c##md IDENTIFIED BY md DEFAULT TABLESPACE users TEMPORARY TABLESPACE temp PROFILE DEFAULT;
+GRANT CONNECT, RESOURCE TO c##md;
+GRANT CREATE VIEW, CREATE SYNONYM TO c##md;
+GRANT UNLIMITED TABLESPACE TO c##md;
+ALTER USER c##md ACCOUNT UNLOCK;
+
+===============================================================
+
+[ 테이블 생성 ]
+
+CREATE TABLE Book (
+bookid NUMBER(2) PRIMARY KEY,
+bookname VARCHAR2(40),
+publisher VARCHAR2(40),
+price NUMBER(8)
+);
+
+===============================================================
+
+[ 데이터/테이블 선택 ]
+
+해당 테이블 전체 뷰잉
+- SELECT * FROM 테이블;
+  e.g. SELECT * FROM customer;
+
+보고싶은 내용에 대해서만 특정 테이블에서 불러와 보기
+- SELECT 변수1, ..., 변수n FROM 테이블;
+  e.g. SELECT publisher FROM book;
+
+중복값 제거하여 보기
+- SELECT DISTINCT 변수 FROM 테이블;
+  e.g. SELECT DISTINCT publisher FROM book;
+
+===============================================================
+
+[ 특정 조건으로 선택 ]
+
+조건 걸어 데이터 선택할 경우에는 where를 먼저 써줘야 함
+- WHERE 조건~~~;
+  e.g.  SELECT * FROM book
+        WHERE price BETWEEN 10000 AND 20000;
+
+이후 세부 조건 달아줌:
+- like 조건: 정확하게 '조건'과 일치하는 케이스
+  e.g. SELECT bookname, publisher FROM book
+       WHERE bookname LIKE '축구의 역사';
+
+- unlike 조건: '조건'과 일치하지 않는 케이스
+  e.g. SELECT bookname, publisher FROM book
+       WHERE bookname UNLIKE '축구';
+
+- %조건$ : '조건'이 포함된
+  e.g. SELECT bookname, publisher FROM book
+       WHERE bookname LIKE '%축구%';
+
+- 변수='조건' : 변수가 '조건'과 정확히 일치하는 경우
+  e.g.  SELECT * FROM book
+        WHERE (publisher='굿스포츠') or (publisher='대한미디어');
+
+- _'문자열'% : 특정 위치에 특정 문자열을 같는 데이터 찾기
+  e.g. SELECT bookname, publisher FROM book
+       WHERE bookname LIKE '_구%';
+
+- group by : 특정 조건에 맞춰 그루핑하여 뷰잉
+  select 변수명1, ..., 변수명n
+  from 테이블
+  group by 그루핑하고 싶은 변수
+    e.g. SELECT custid, COUNT(*)AS 도서수량, sum(saleprice) AS "총 판매액"
+         From orders
+         Group by custid;
+          ==> orders 테이블에서 custid, 데이터 셀 개수, saleprice를 선택하여
+              custid별로 데이터 묶는데
+              saleprice는 custid별의 합계를 계산해 '총 판매액'이라는 새 변수로 넣어 제시
+
+- having count(*) : group by 뒤에 세부 조건 붙일 때 사용
+  e.g. SELECT custid, COUNT(*)AS 도서수량, sum(saleprice) AS "총 판매액"
+       From orders
+       Where bookid>=5
+       Group by custid
+       HAVING COUNT(*)>2;
+       ==> 위에서 custid로 새로 정리된 데이터를 제시하는데,
+           그 중 custid 별 count가 (데이터 셀 총 개수) 2 이상인 경우만 선택
+
+=============================================================== 
+
+[ 데이터 정렬 ]
+올림차순:
+  order by 변수1, ... 변수n;
+  e.g. SELECT * FROM book
+       order by price,bookname;
+        ==>  먼저 쓰여진 변수의 기준으로 소팅되고, 
+             동급이 있는 경우 그 다음 변수의 기준으로 소팅
+
+내림차순:
+  order by 변수 desc;
+  e.g. SELECT * FROM book
+       ORDER BY price DESC;
+
+===============================================================
+
+[ 계산하여 새로운 변수로 데이터 선택할 때 ]
+
+- 합계: sum 함수 사용
+  sum(변수명) as 새로운변수명
+  e.g. select sum(saleprice) as total
+       from orders;
+        ==> orders 테이블에서 saleprice 변수의 데이터를 모두 더해서 
+            'total'이라는 새로운 변수명으로 데이터 정리
+- 평균: avg 함수 사용
+  e.g. select avg(saleprice) as average
+       from orders;
+- 최대값: max 함수 사용
+  e.g. select max(saleprice) as maximum
+       from orders;
+- 최소값: min 함수 사용
+  e.g. select min(saleprice) as minimum
+       from orders;
+
+
+
