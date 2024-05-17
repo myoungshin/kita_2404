@@ -1,1 +1,48 @@
+<< SQL (Structured Query Language) >>
+RDBMS에서 데이터를 관리하고 조작하기 위해 사용되는 표준 프로그래밍 언어
+주요 기능은 아래와 같이 4가지로 구분됨:
+(1) DDL - 데이터 정의 
+(2) DML - 데이터 조작 
+(3) DCL - 데이터 제어 
+(4) TCL - 트랜잭션 제어
 
+===================================================
+
+DDL (Data Definition Language)
+- 테이블 정의/수정
+• CREATE: 새로운 데이터베이스, 테이블, 인덱스 등을 생성.
+    e.g.  CREATE TABLE Employees (
+          EmployeeID int,
+          FirstName varchar(50),
+          LastName varchar(50),
+          BirthDatedate,
+          Position varchar(50)
+          )
+          ==> int: 정수로
+          ==> varchar: 가변적인 변수 
+          ==> (50): max 50
+• ALTER: 기존 테이블 구조를 수정.
+• DROP: 데이터베이스, 테이블, 인덱스를 삭제.
+
+DML (Data Manipulation Language)
+- 데이터 수정
+• SELECT: 데이터베이스에서데이터를 조회.
+• INSERT: 테이블에 새로운 데이터를 삽입.
+• UPDATE: 기존 데이터의 값을 수정.
+    e.g. UPDATE Employees SET Position = 'Senior Manager' WHERE EmployeeID = 1;
+          ==> EmployeeId가 1이라면 Position을 senior manager로 업데이트하라는 뜻
+
+• DELETE: 테이블에서 데이터를 삭제.
+
+DCL (Data Control Language)
+• GRANT: 사용자에게 특정 권한을 부여.
+    e.g. GRANT SELECT ON employees TO john;
+          ==> John에게 employee를 선택할 권한을 부여
+• REVOKE: 사용자에게 부여된 권한을 철회.
+
+TCL (Transaction Control Language)
+• COMMIT: 모든 변경 사항을 영구적으로 저장.
+• ROLLBACK: 변경 사항을 취소하고 이전 상태로 되돌림.
+• SAVEPOINT: 트랜잭션 내에서 특정 지점을 설정하여 부분 롤백 가능.
+
+===================================================
