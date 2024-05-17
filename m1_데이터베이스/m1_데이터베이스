@@ -20,7 +20,7 @@ DDL (Data Definition Language)
           )
           ==> int: 정수로
           ==> varchar: 가변적인 변수 
-          ==> (50): max 50
+          ==> (50): max 50 비트
 • ALTER: 기존 테이블 구조를 수정.
 • DROP: 데이터베이스, 테이블, 인덱스를 삭제.
 
