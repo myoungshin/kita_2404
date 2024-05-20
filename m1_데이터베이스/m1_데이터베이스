@@ -24,7 +24,16 @@ DDL (Data Definition Language)
           ==> int: 정수로
           ==> varchar: 가변적인 변수 
           ==> (50): max 50 비트
-• ALTER: 기존 테이블 구조를 수정.
+• ALTER: 기존 테이블 구조를 수정/추가/삭제.
+    - 제약조건 수정: 
+        e.g. alter table newbook modify (isbn varchar2(50));
+             ==> alter 사용 시 테이블 안의 데이터가 모두 비워진 상태에서만 사용 가능
+    - 열 추가:
+        e.g. alter table newbook add author_id number;
+    - 열 삭제:
+        e.g. alter table newbook drop column author_id;
+
+
 • DROP: 데이터베이스, 테이블, 인덱스를 삭제.
 
 DML (Data Manipulation Language)
