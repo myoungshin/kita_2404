@@ -14,7 +14,7 @@ ALTER USER c##md ACCOUNT UNLOCK;
 
 ===============================================================
 
-[ 테이블 생성 ]
+[ 테이블 생성 ] 
 
 CREATE TABLE Book (
 bookid NUMBER(2) PRIMARY KEY,
@@ -47,6 +47,27 @@ price NUMBER(8)
 - WHERE 조건~~~;
   e.g.  SELECT * FROM book
         WHERE price BETWEEN 10000 AND 20000;
+
+- 조건1 AND 조건2: 조건1과 조건2에 모두 부합하는 케이스
+  e.g.  SELECT bookname, price FROM book
+        WHERE bookname like '축구' and price>=20000;
+
+- 조건1 BETWEEN 조건2: 조건1과 조건2 사이에 들어가는 케이스
+  e.g.  SELECT * FROM book
+        WHERE price BETWEEN 10000 AND 20000;
+
+- 변수 in ('조건1', '조건2') : 
+  e.g.  SELECT * FROM book
+        WHERE publisher in ('굿스포츠','대한미디어');
+
+- union :
+  e.g.  SELECT * FROM book
+        WHERE publisher='굿스포츠' 
+        union 
+        select * from book 
+        where publisher='대한미디어';
+
+
 
 이후 세부 조건 달아줌:
 - like 조건: 정확하게 '조건'과 일치하는 케이스
@@ -110,19 +131,138 @@ price NUMBER(8)
 
 - 합계: sum 함수 사용
   sum(변수명) as 새로운변수명
+  ** as는 제외해도 됨
   e.g. select sum(saleprice) as total
        from orders;
         ==> orders 테이블에서 saleprice 변수의 데이터를 모두 더해서 
             'total'이라는 새로운 변수명으로 데이터 정리
+
 - 평균: avg 함수 사용
   e.g. select avg(saleprice) as average
        from orders;
+
 - 최대값: max 함수 사용
   e.g. select max(saleprice) as maximum
        from orders;
+
 - 최소값: min 함수 사용
   e.g. select min(saleprice) as minimum
        from orders;
+
+===============================================================
+
+[ 다른 테이블에 있는 데이터들 선택하여 함께 보기 ]
+join 을 쓸 수도 있고 
+"테이블명.변수명" + where 로 불러와 출력도 가능
+
+- "테이블명.변수명" + where :
+  e.g. select customer.name, orders.custid, sum(orders.saleprice) as "총 판매액"
+       from orders, customer
+       where orders.custid=2 and orders.custid=customer.custid
+       group by customer.name, orders.custid;
+
+  e.g. select name, saleprice
+       from customer, orders
+       where customer.custid=orders.custid;
+
+  e.g. select C.name, B.bookname
+       from customer C, book B, orders O
+       where C.custid=O.custid and O.bookid=B.bookid;
+
+** 두 테이블에서 설렉해서 뽑을 때 양쪽 테이블의 길이가 같지 않다면, 더 없는 테이블쪽에 + 표기를 넣어서 사용
+    e.g. Q. 도서를 구매하지 않은 고객을 포함하여 고객의 이름과 고객이 주문한 도서의 판매가격을 구하시오
+         select C.name, O.saleprice
+         from customer C, orders O
+         where C.custid=O.custid(+);
+         ==> orders에 빈값이 생기니까 orders 에 + 넣어줌
+
+Join:
+- 2개 이상의 테이블을 연결하여 관련된 데이터를 결합할 때 사용
+- 여러가지 타입의 조인이 있음.
+  1. 내부 조인 (inner join) : 
+      - 교집합
+        e.g. select customer.name, orders.custid, sum(orders.saleprice)
+             from orders
+             inner join customer on orders.custid=customer.custid
+             where orders.custid=2
+             group by customer.name, orders.custid;
+      
+        e.g. select customer.name, book.bookname
+             from orders
+             inner join customer on orders.custid=customer.custid
+             inner join book on orders.bookid=book.bookid;
+
+
+** outer join은 조인하는 여러테이블에서 한 쪽에는 데이터가 있고, 한 쪽에는 데이터가 없는 경우, 
+   데이터가 있는 쪽 테이블의 내용을 모두 출력함. 
+   즉, 조건에 맞지 않아도 해당하는 행을 출력하고 싶을 때 사용할 수 있음
+
+  2. 왼쪽 외부 조인 (Left Outer Join) : 
+      - 두번째 테이블에 일치하는 데이터가 없는 경우 null값이 사용
+        e.g. select customer.name, orders.saleprice
+             from customer
+             left outer join orders on customer.custid=orders.custid;
+
+  3. 오른쪽 외부 조인 (Right Outer Join) : 
+      - 첫번째 테이블에 일치하는 데이터가 없는 경우  null 값 사용
+        e.g. select customer.name,orders.saleprice
+             from customer
+             right outer join
+             orders on customer.custid=orders.custid;
+
+  4. Full Outer Join : 
+      - 일치하는 데이터가 없는 경우 해당 테이블에서는 null값이 사용
+
+         e.g. select customer.name, orders.saleprice
+         from customer
+         full outer join orders on customer.custid=orders.custid;
+
+  5. Cross Join : 
+      - 두 테이블 간의 모든 가능한 조합을 생성
+        e.g. select customer.name, orders.saleprice
+             from customer
+             cross join orders;
+
+
+===============================================================
+
+[ 부속 질의 (sub query) ]
+부속질의란 하나의 SQL 문 안에 또다른 SQL 문이 삽입되는 것
+다른 테이블에서 가져온 데이터로 현재 테이블에 있는 정보를 찾거나 가공할 때 사용
+
+기본 형태: 
+select 보고자하는 변수명
+from 해당 변수가 속한 테이블명
+where 해당 변수를 다른 테이블에서 참조할 때 사용할 수 있는 공통 변수 (select 공통 변수 from 참조 테이블);
+
+
+e.g. Q. 도서를 구매할 적이 있는 고객의 이름을 검색하시오.
+     select name
+     from customer
+     where custid in (select custid from orders);
+     ==> orders 테이블에 custid가 있는 고객의 이름을 출력하라는 뜻
+
+e.g. Q. ‘대한미디어’에서 출판한 도서를 구매한 고객의 이름을 보이시오.
+     select name
+     from customer
+     where custid in (select custid from orders
+     where bookid in (select bookid from book 
+     where publisher='대한미디어'));
+
+e.g. Q. 출판사별로 출판사의 평균 도서 가격보다 비싼 도서를 구하시오.
+     select b1.bookname
+     from book b1
+     where b1.price>(select avg(b2.price)
+     from book b2
+     where b2.publisher=b1.publisher);
+     ==> 동일 테이블 내에서 데이터를 가져오는데, 가져올 때 2개로 나눠서 쿼리를 정리함
+         bookname을 가져올 b1과 price 조건을 걸 b2
+
+e.g. Q. 도서를 주문하지 않은 고객의 이름을 보이시오.
+     select name 
+     from customer 
+     where custid not in (select custid from orders);
+
 
 
 
