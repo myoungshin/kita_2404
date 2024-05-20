@@ -16,12 +16,69 @@ ALTER USER c##md ACCOUNT UNLOCK;
 
 [ 테이블 생성 ] 
 
-CREATE TABLE Book (
-bookid NUMBER(2) PRIMARY KEY,
-bookname VARCHAR2(40),
-publisher VARCHAR2(40),
-price NUMBER(8)
-);
+기본 형태:
+  create table 테이블명(
+  열이름 데이터타입 제약조건,
+  ...);
+  ==> 제약조건은 필수는 아님. 필요에 따라 내용 추가
+
+e.g. CREATE TABLE Book (
+     bookid NUMBER(2) PRIMARY KEY,
+     bookname VARCHAR2(40),
+     publisher VARCHAR2(40),
+     price NUMBER(8)
+     );
+
+
+[ on delete cascade + foreign key 설정 ]
+
+on delete cascade 옵션이 설정되어 있어, 
+newcustomer 테이블에서 어떤 고객의 레코드가 삭제되면, 
+해당 고객의 모든 주문이 neworders 테이블에서도 자동으로 삭제
+
+e.g. create table newcustomer(
+     custid number primary key,
+     name varchar2(40),
+     address varchar2(40),
+     phone varchar2(30));
+    
+     create table neworders(
+     orderid number,
+     custid number not null,
+     bookid number not null,
+     saleprice number,
+     orderdate date,
+     primary key(orderid),
+     foreign key(custid) references newcustomer(custid) on delete cascade);
+
+===============================================================
+
+[ 테이블에 데이터 입력 ]
+insert into 사용
+기본 형태:
+  insert into 테이블명 values(행 데이터 입력,...);
+
+- 테이블 수정 
+alter + add 사용
+기본 형태:
+  alter table 테이블명 add 열이름 데이터타입;
+    e.g. alter table newbook add author_id number;
+
+- 테이블 기전 제약조건 수정 
+alter + modify 사용
+기본 형태: 
+  alter table 테이블명 modify (열이름 데이터타입 수정내용));
+      e.g. alter table newbook modify (isbn varchar2(50));
+           ==> alter 사용 시 테이블 안의 데이터가 모두 비워진 상태에서만 사용 가능
+
+- 테이블 삭제 
+alter + drop 사용
+기본 형태:
+  alter table 테이블명 drop column 테이블명;
+      e.g. alter table newbook drop column author_id;
+
+   
+
 
 ===============================================================
 
@@ -78,7 +135,7 @@ price NUMBER(8)
   e.g. SELECT bookname, publisher FROM book
        WHERE bookname UNLIKE '축구';
 
-- %조건$ : '조건'이 포함된
+- %조건% : '조건'이 포함된
   e.g. SELECT bookname, publisher FROM book
        WHERE bookname LIKE '%축구%';
 
@@ -226,7 +283,7 @@ Join:
 
 ===============================================================
 
-[ 부속 질의 (sub query) ]
+[ 부속 질의 (subquery) ]
 부속질의란 하나의 SQL 문 안에 또다른 SQL 문이 삽입되는 것
 다른 테이블에서 가져온 데이터로 현재 테이블에 있는 정보를 찾거나 가공할 때 사용
 
@@ -263,6 +320,13 @@ e.g. Q. 도서를 주문하지 않은 고객의 이름을 보이시오.
      from customer 
      where custid not in (select custid from orders);
 
+
+===============================================================
+
+[ to_date ]
+
+to_date('2024-05-20','YYYY-MM-DD')
+to_date('2024-05-20 15:45:30','YYYY-MM-DD HH24:MI:SS')
 
 
 
