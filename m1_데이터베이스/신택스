@@ -442,3 +442,26 @@ where b1.price>(select avg(b2.price)
 from book b2
 where b2.publisher=b1.publisher);
 
+===============================================================
+
+NVL 함수:
+기본 형태: NVL("값", "지정값")
+e.g. select name 이름, NVL(phone,'연락처없음') 전화번호
+     from customer;
+     select*from customer;
+
+sysdate 함수:
+서버에 설정된 현재 날짜/시간 정보를 반환
+e.g. select sysdate from dual;
+     ==> 그냥 지금 당장의 날짜를 보여줌
+
+e.g. select sysdate, to_char(sysdate, 'yyyy-mm-dd HH:MI:SS day') sysdate1
+     from dual;
+     ==> DBMS 서버에 설정된 현재 날자와 시간, 요일을 확인
+
+rownum 함수:
+오라클에서 자동으로 제공하는 가상 열로 쿼리가 진행되는 동안 각 행에 일련번호를 자동으로 할당
+e.g. select rownum 순번, custid 고객번호, name 이름, phone 전화번호
+     from customer
+     where rownum<3;
+
