@@ -51,6 +51,14 @@ e.g. create table newcustomer(
      primary key(orderid),
      foreign key(custid) references newcustomer(custid) on delete cascade);
 
+
+===============================================================
+
+[ 테이블 스키마 확인 ]
+desc 테이블명;
+==> 해당 테이블의 각 열에 대한 정보 확인 가능 (e.g. 열이름, 데이터 타입 등)
+
+
 ===============================================================
 
 [ 테이블에 데이터 입력 ]
@@ -71,13 +79,27 @@ alter + modify 사용
       e.g. alter table newbook modify (isbn varchar2(50));
            ==> alter 사용 시 테이블 안의 데이터가 모두 비워진 상태에서만 사용 가능
 
-- 테이블 삭제 
+- 테이블의 특정 열 삭제 
 alter + drop 사용
 기본 형태:
   alter table 테이블명 drop column 테이블명;
       e.g. alter table newbook drop column author_id;
+  
 
-   
+===============================================================
+
+[ 데이터 삭제 ] 
+
+delete 테이블명;
+  e.g. delete mart
+       ==> 해당 테이블에 들어 있는 모든 데이터 삭제
+
+
+delete 테이블명 where 변수명='조건';
+  e.g. delete mart where custid=1234
+       ==> 해당 테이블의 해당 조건에 해당되는 변수에 대한 데이터 전체 삭제
+    
+
 
 
 ===============================================================
@@ -169,6 +191,28 @@ alter + drop 사용
 
 =============================================================== 
 
+[ 데이터를 새로 조합하여 뷰잉할 때 ]
+
+- 글자수, 바이트 수
+  length : 글자수
+  lengthb : 바이트수
+  e.g. select bookname 제목, length(bookname) 글자수, lengthb(bookname) 바이트수
+       from book
+       where publisher='굿스포츠';
+
+- 문자열 내에서 특정 부분으로만 데이터 재정렬해서 뷰잉
+  substr(변수명, 몇번째 글자부터, 몇개의 글자)
+  e.g. select*from customer;
+       select substr(name,1,1)성 , count(*) 인원 -- <== 여기서의 count(*)은 그룹내에서의 전체
+       from customer
+       group by substr(name,1,1);
+       ==> substr(name,1,1) 함수는 문자열 name의 첫번째 글자부터 시작하여 한 글자를 반환
+       ==> group by 절에서는 별칭이 아닌 substr(name,1,1) 표현식을 사용해야 함
+
+
+
+===============================================================
+
 [ 데이터 정렬 ]
 올림차순:
   order by 변수1, ... 변수n;
@@ -206,9 +250,26 @@ alter + drop 사용
   e.g. select min(saleprice) as minimum
        from orders;
 
+- 절대값: abs (-음수), abs(+양수) 
+  e.g. select abs(-78), abs(+78)
+       from dual;
+       ==> 테이블 없이 계산할 때는 from 뒤에 'dual'을 붙임
+
+- 반올림: round(반올림할 숫자, 표기할 소수점 자리)
+  e.g. select round(4.785,1)
+       from dual;
+  e.g. select custid as 고객번호, round(avg(saleprice),-2) as 평균주문금액
+       from orders
+       group by custid;
+        ==> 소수점 자리일 경우 1처럼 양수 표기로, 
+            소수점 이상의 자리 (e.g. 10의자리, 100의 자리)인 경우 
+            -2와 같이 음수 표기 넣어줘야 함
+
+
 ===============================================================
 
 [ 다른 테이블에 있는 데이터들 선택하여 함께 보기 ]
+
 join 을 쓸 수도 있고 
 "테이블명.변수명" + where 로 불러와 출력도 가능
 
@@ -249,7 +310,6 @@ Join:
              inner join customer on orders.custid=customer.custid
              inner join book on orders.bookid=book.bookid;
 
-
 ** outer join은 조인하는 여러테이블에서 한 쪽에는 데이터가 있고, 한 쪽에는 데이터가 없는 경우, 
    데이터가 있는 쪽 테이블의 내용을 모두 출력함. 
    즉, 조건에 맞지 않아도 해당하는 행을 출력하고 싶을 때 사용할 수 있음
@@ -284,6 +344,7 @@ Join:
 ===============================================================
 
 [ 부속 질의 (subquery) ]
+
 부속질의란 하나의 SQL 문 안에 또다른 SQL 문이 삽입되는 것
 다른 테이블에서 가져온 데이터로 현재 테이블에 있는 정보를 찾거나 가공할 때 사용
 
@@ -320,13 +381,64 @@ e.g. Q. 도서를 주문하지 않은 고객의 이름을 보이시오.
      from customer 
      where custid not in (select custid from orders);
 
+e.g. Q. '대한민국’에 거주하는 고객에게 판매한 도서의 총 판매액을 구하시오.
+    select sum(saleprice) as 총판매액
+    from orders
+    where custid in (select custid from customer where address like '대한민국%');
+
 
 ===============================================================
 
-[ to_date ]
+[ 데이터 수정 ...?????? ]
 
+- 기존 문자열을 다른 문자열로 대체:
+replace(변수명, '수정할 문자열', '대체할 문자열')
+e.g. select bookid, replace(bookname, '야구', '농구') bookname, publisher, price
+     from book;
+
+
+
+===============================================================
+
+[ 날짜 관련 수정 ]
+
+- 데이터 날짜로 표기할 때:
 to_date('2024-05-20','YYYY-MM-DD')
 to_date('2024-05-20 15:45:30','YYYY-MM-DD HH24:MI:SS')
 
+< 날짜 연산 >
+- days 수로 계산할 때:
+변수명+연산하려는 날짜 
+e.g. select orderid,orderdate as 주문일, orderdate+10 as 확정일자
+     from orders;
 
+- month 단위로 계산이 필요하면:
+add_months(변수명, 몇 개월)
+e.g. select orderid, orderdate 주문일, add_months(orderdate,2) as 확정일자
+     from orders;
+
+< date to str >
+- 날짜 제시 방식을 바꾸고 싶을때:
+to_char(변수명, '제시 방식')
+e.g. select orderid 주문번호, to_char(orderdate,'yyyy-mm-dd day') 주문일, custid 고객번호, bookid 도서번호
+     from orders
+     where orderdate='2020-07-07';
+
+
+===============================================================
+
+** 동일 테이블 내의 데이터를 여러 계산 혹은 조합으로 묶어 새로 보려고 할 경우
+   테이블이 다수 있는 것처럼 가상의 테이블을 만들어서 쿼리를 작성할 수도 있음
+
+e.g. 
+select o1.orderid 주문번호, o1.saleprice 금액
+from orders o1
+where o1.saleprice<=(select avg(o2.saleprice)from orders o2);
+
+e.g. 
+select b1.bookname
+from book b1
+where b1.price>(select avg(b2.price)
+from book b2
+where b2.publisher=b1.publisher);
 
