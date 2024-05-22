@@ -18,7 +18,7 @@ DDL (Data Definition Language)
           EmployeeID int,
           FirstName varchar(50),
           LastName varchar(50),
-          BirthDatedate,
+          BirthDate date,
           Position varchar(50)
           )
           ==> int: 정수로
@@ -35,6 +35,7 @@ DDL (Data Definition Language)
 
 
 • DROP: 데이터베이스, 테이블, 인덱스를 삭제.
+    e.g. drop table 테이블명;
 
 DML (Data Manipulation Language)
 - 데이터 수정
