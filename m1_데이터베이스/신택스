@@ -82,7 +82,7 @@ alter + modify 사용
 - 테이블의 특정 열 삭제 
 alter + drop 사용
 기본 형태:
-  alter table 테이블명 drop column 테이블명;
+  alter table 테이블명 drop column 열이름;
       e.g. alter table newbook drop column author_id;
   
 
@@ -136,8 +136,13 @@ delete 테이블명 where 변수명='조건';
         WHERE price BETWEEN 10000 AND 20000;
 
 - 변수 in ('조건1', '조건2') : 
+  ==> or 대신으로 사용됨
   e.g.  SELECT * FROM book
         WHERE publisher in ('굿스포츠','대한미디어');
+
+  e.g. select*from employees where manager_id in (101,102,103);
+       ==> 아래 코드와 동일한 내용이 나옴 (or 사용문)
+           select*from employees where manager_id=101 or manager_id=102 or manager_id=103;
 
 - union :
   e.g.  SELECT * FROM book
@@ -145,7 +150,6 @@ delete 테이블명 where 변수명='조건';
         union 
         select * from book 
         where publisher='대한미디어';
-
 
 
 이후 세부 조건 달아줌:
@@ -164,6 +168,13 @@ delete 테이블명 where 변수명='조건';
 - 변수='조건' : 변수가 '조건'과 정확히 일치하는 경우
   e.g.  SELECT * FROM book
         WHERE (publisher='굿스포츠') or (publisher='대한미디어');
+
+- 변수명 is null/ is not null: null 값인지 확인할 때 사용
+  e.g. select*from employees where commission_pct is null;
+       ==> commision_pct 이 빈값인 케이스 모두 출력
+  e.g. select*from employees where commission_pct is not null;
+       ==> commision_pct 에 값이 있는 케이스 모두 출력
+
 
 - _'문자열'% : 특정 위치에 특정 문자열을 같는 데이터 찾기
   e.g. SELECT bookname, publisher FROM book
@@ -209,7 +220,13 @@ delete 테이블명 where 변수명='조건';
        ==> substr(name,1,1) 함수는 문자열 name의 첫번째 글자부터 시작하여 한 글자를 반환
        ==> group by 절에서는 별칭이 아닌 substr(name,1,1) 표현식을 사용해야 함
 
-
+- 다른 열에 있는 데이터를 하나로 합칠 때 (각 열에 있는 문자열을 하나로 합치기)
+  변수명1 || ' ' || 변수명2 as '별칭'
+  e.g. select e.employee_id 사번, e.first_name||''|| e.last_name as 이름, e.job_id 업무, j.job_title 업무명
+       from employees e
+       inner join jobs j on e.job_id=j.job_id
+       where e.employee_id=120;
+       ==> first_name과 last_name 의 데이터를 합치고 '이름'이라는 새로운 변수명으로 제시해줌
 
 ===============================================================
 
@@ -225,6 +242,12 @@ delete 테이블명 where 변수명='조건';
   order by 변수 desc;
   e.g. SELECT * FROM book
        ORDER BY price DESC;
+
+올림차순+내림차순 같이 쓸 때:
+  order by 변수명1 asc, 변수명2 desc;
+  e.g. select*from employees 
+       order by salary asc, last_name desc;
+
 
 ===============================================================
 
@@ -265,6 +288,21 @@ delete 테이블명 where 변수명='조건';
             소수점 이상의 자리 (e.g. 10의자리, 100의 자리)인 경우 
             -2와 같이 음수 표기 넣어줘야 함
 
+- 버림 함수: trunc(값, 자리수)
+  e.g. select trunc(45.5555,1) from dual;
+       ==> 소수 1번째 자리까지만 제공, 그 아래는 버림 (round 없이 버림)
+
+- 올림 함수: ceil(값)
+  e.g. select ceil(45.111) from dual;
+       ==> 소수점자리에 뭐가 들어있든 상관없이 현재 1의 자리에 들어 있는 숫자에서 1 올림
+
+- 나머지: mod(무엇을, 뭘로 나눌지):
+  e.g. lect mod(10,3) from dual;
+  ** 변수명을 집어넣고 나머지 값이 몇인 경우, 로 조건 걸어서 테이블 출력도 가능:
+  e.g. select * from employees where mod (employee_id,2)=1; 
+       ==> employee_id가 홀수인 경우만 출력 (사번을 2로 나누었을 때 나머지가 1인 경우)
+
+
 
 ===============================================================
 
@@ -272,6 +310,8 @@ delete 테이블명 where 변수명='조건';
 
 join 을 쓸 수도 있고 
 "테이블명.변수명" + where 로 불러와 출력도 가능
+and도 가능
+
 
 - "테이블명.변수명" + where :
   e.g. select customer.name, orders.custid, sum(orders.saleprice) as "총 판매액"
@@ -339,6 +379,13 @@ Join:
         e.g. select customer.name, orders.saleprice
              from customer
              cross join orders;
+
+and:
+e.g. select employee_id 사번, 
+     first_name||''|| last_name as 이름, j.job_id 업무, j.job_title 업무명
+     from employees e, jobs j
+     where e.employee_id=120
+     and e.job_id=j.job_id;
 
 
 ===============================================================
@@ -424,6 +471,11 @@ e.g. select orderid 주문번호, to_char(orderdate,'yyyy-mm-dd day') 주문일,
      from orders
      where orderdate='2020-07-07';
 
+e.g. select first_name||' '|| last_name as 이름, hire_date
+     from employees
+     where to_char (hire_date, 'YY/MM') between '05/01' and '05/06';
+     ==> first_name, last_name 합쳐서 '이름'으로 보이도록 하고
+         hire_date가 05/01 ~ 05/06 사이인 케이스를 뽑기 
 
 ===============================================================
 
