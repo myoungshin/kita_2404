@@ -55,7 +55,16 @@ DCL (Data Control Language)
 
 TCL (Transaction Control Language)
 • COMMIT: 모든 변경 사항을 영구적으로 저장.
+
 • ROLLBACK: 변경 사항을 취소하고 이전 상태로 되돌림.
+
 • SAVEPOINT: 트랜잭션 내에서 특정 지점을 설정하여 부분 롤백 가능.
+    기본 형태:
+    savepoint "savepoint 이름"
+    e.g. savepoint sq1;
+         ==> 현재까지 작업한 포인트까지 일시저장됨.
+         ==> rollback 사용할 경우 그 시점으로부터 가장 최근의 savepoint 사이의 데이터 수정사항을 원복함
+
+
 
 ===================================================
