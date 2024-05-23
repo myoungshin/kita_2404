@@ -63,6 +63,10 @@ desc 테이블명;
 
 [ 테이블에 데이터 입력 ]
 insert into 사용
+-- 테이블에 데이터를 입력하는 방법은 두 가지 유형이 있으며, 한 번에 한 건만 입력 가능
+-- 1. insert into 테이블명 (column_list) values (column_list에 넣을  value_list); <== 몇개의 속성에 (변수) 대한 데이터만 넣을 경우 
+-- 2. insert into 테이블명 values (전체 column에 넣을 value_list); <== 전체 속성에 대한 데이터를 넣을 경우 사용
+
 기본 형태:
   insert into 테이블명 values(행 데이터 입력,...);
 
@@ -99,6 +103,46 @@ delete 테이블명 where 변수명='조건';
   e.g. delete mart where custid=1234
        ==> 해당 테이블의 해당 조건에 해당되는 변수에 대한 데이터 전체 삭제
     
+===============================================================
+
+[ 뷰 - 실제 데이터/테이블 수정 없이 쿼리문 저장하여 가상으로 테이블 사용 ]
+
+create view
+- 오라클 SQL에서 테이블의 특정 부분이나 조인된 결과를 논리적인 뷰(view)로 만들 때 사용
+- 뷰는 데이터를 요약하거나 복잡한 조인을 단순화하며, 사용자에게 필요한 데이터만을 보여주는 데 유용
+- 뷰는 실제 테이블 데이터를 저장하지 않고, 대신 쿼리문 자체를 저장
+- 뷰의 주요 특징
+- 쿼리 단순화: 복잡한 쿼리를 뷰로 저장함으로써 사용자는 복잡한 쿼리문을 반복해서 작성할 필요 없이 간단하게 뷰를 참조할 수 있다.
+- 데이터 추상화: 뷰는 기본 테이블의 구조를 숨기고 사용자에게 필요한 데이터만을 보여줄 수 있어, 데이터 추상화를 제공.
+- 보안 강화: 뷰를 사용하면 특정 데이터에 대한 접근을 제한할 수 있으며, 사용자가 볼 수 있는 데이터의 범위를 제어할 수 있다.
+- 데이터 무결성 유지: 뷰를 사용하여 데이터를 수정하더라도, 이 변경사항이 기본 테이블의 데이터 무결성 규칙을 위반하지 않도록 관리할 수 있다.
+  ==> 이전에 쿼리로 생성한 테이블에서 사용된 변수들을 이후 사용할 수 있도록 해줌...?
+
+  기본 형태 :
+    (뷰 생성) :
+    create view 뷰이름 as
+    select 변수명1,...변수명n
+    from 변수들 가져올 테이블
+    e.g. create view employee_details as -- <== "employee_details" 라는 view 이름으로 아래 테이블을 생성하고 가상 저장해두겠다는 뜻
+         select employee_id, last_name, department_id
+         from employees;
+         ==> 기존에 원하는 내용으로 데이터 확인하려고 했던거에다가 create view 라인만 추가해주면 됨
+    e.g. create view "부서별 직원수" as
+         select d.department_name, count(*) as 직원수
+         from departments d
+         join employees e on d.department_id=e.department_id
+         group by d.department_name
+         order by d.department_name;
+
+    (뷰 불러오기) :
+    select*from 뷰이름;
+    ==> 기존에 테이블 불러올 때아 동일한 방식
+
+drop view 
+- 생성한 뷰 삭제.
+  기본 형태: 
+    drop view 뷰이름;
+
 
 
 
@@ -144,13 +188,43 @@ delete 테이블명 where 변수명='조건';
        ==> 아래 코드와 동일한 내용이 나옴 (or 사용문)
            select*from employees where manager_id=101 or manager_id=102 or manager_id=103;
 
-- union :
+- union : 합집합. 둘 중 하나라도 속하면 출력
   e.g.  SELECT * FROM book
         WHERE publisher='굿스포츠' 
         union 
         select * from book 
         where publisher='대한미디어';
+  e.g. select first_name 이름, salary 급여 from employees
+       where salary<5000
+       union
+       select first_name 이름, salary 급여 from employees
+       where hire_date <'99/01/01';
 
+- intersect : 교집합. 1,2번 내용 모뒈 해당되는 케이스만 출력
+e.g. select first_name 이름, salary 급여, hire_date from employees
+     where salary < 5000
+     intersect
+     select first_name 이름, salary 급여, hire_date from employees
+     where hire_date <'05/01/01';
+
+- minus : 차집합. 1번째 내용에 해당되지만 두번째 내용에는 해당되지 않는 케이스 출력
+e.g. select first_name 이름, salary 급여, hire_date from employees
+     where salary < 5000
+     minus
+     select first_name 이름, salary 급여, hire_date from employees
+     where hire_date <'05/01/01';
+
+- union all : 겹치는 것까지 포함. 1번과 2번 케이스에 모두 해당된다면 중복되어 출력됨
+e.g. select first_name 이름, salary 급여, hire_date from employees
+     where salary < 5000
+     union all
+     select first_name 이름, salary 급여, hire_date from employees
+     where hire_date <'05/01/01';
+** union, intersect, minus, union all 은 모두 두개의 쿼리문을 사용해야하며
+   데이터 타입을 일치시켜야 함
+
+
+====================
 
 이후 세부 조건 달아줌:
 - like 조건: 정확하게 '조건'과 일치하는 케이스
@@ -242,6 +316,12 @@ lengthb : 바이트수
        inner join jobs j on e.job_id=j.job_id
        where e.employee_id=120;
        ==> first_name과 last_name 의 데이터를 합치고 '이름'이라는 새로운 변수명으로 제시해줌
+       ==> 하나의 열에 last_name, is a, job_id 가 붙는 형태
+  
+  변수명1, '넣을 내용', 변수명2 
+  e.g. select last_name, 'is a', job_id from employees;
+       ==> 개별 열에 last_name, is a, job_id 가 붙는 형태
+
 
 - 특정 조건의 데이터에 대해 신규 열 & 데이터 추가하여 볼 때
 temporary 데이터명+신규 열이름 사용
@@ -524,9 +604,49 @@ e.g. Q. '대한민국’에 거주하는 고객에게 판매한 도서의 총 �
 
 - 기존 문자열을 다른 문자열로 대체:
 replace(변수명, '수정할 문자열', '대체할 문자열')
-e.g. select bookid, replace(bookname, '야구', '농구') bookname, publisher, price
-     from book;
+  e.g. select bookid, replace(bookname, '야구', '농구') bookname, publisher, price
+       from book;
 
+- 기존 들어가 있는 값을 다른 내용으로 일괄 처리:
+decode(변수명, 코드1, '코드1 대체값',...,코드n, '코드n 대체값', 'default값') 
+** default값 == 대체값으로 재수정하지 않는 나머지 케이스들을 어떻게 표기할건지 작성
+  e.g. select last_name, department_id,
+       decode (department_id,
+          90, '경영지원실',
+          60, '프로그래머',
+          100, '인사부',
+          '기타') -- <== 지정되지 않은 케이스는 모두 default로 '기타' 처리 
+          부서 
+       from employees;
+e.g. Q. employees 테이블에서 commission_pct가 null이 아닌 경우 'A'를, null인 경우 'N'을 표시하는 쿼리를 작성
+        select commission_pct as commission,
+            decode(commission_pct, null, 'N','A') as 변환
+        from employees
+        order by 변환 desc;
+
+case : 
+  - decode() 함수와 유사
+  - 하지만, decode() 함수는 단순한 조건 비교에 사용되는 반면
+    case() 함수는 다양한 비교연산자로 조건을 제시 가능
+  - CASE 문은 조건에 따라 다른 값을 반환하는 데 사용되며, 
+    DECODE보다 복잡한 조건을 표현할 수 있음
+  - 기본 형태: 
+    CASE WHEN condition THEN result ... ELSE default END 
+  e.g. select last_name, department_id,
+       case 
+       when department_id=90 then '경영지원실' -- <= ~ 조건에 대해 부합할 경우 '경영지원실'로 코딩
+       when department_id=60 then '프로그래머'
+       when department_id=100 then '인사부'
+       else '기타' -- <== 위 케이스들에 해당되지 않는 남은 케이스들은 모두 '기타'로 표기
+       end as 소속 -- <== 재정리한 이 데이터들은 '소속'이라는 새 이름으로 담음 
+       from employees;
+  e.g. select last_name, salary,
+       case
+       when salary>=20000 then 'a'
+       when salary>10000 and salary<20000 then 'b'
+       else 'c'
+       end as 등급
+       from employees;
 
 
 ===============================================================
@@ -605,7 +725,7 @@ e.g. select hire_date, next_day(hire_date,2) from employees;
      ==> 월요일==2 여서 () 안에 2를 넣어도 '월'과 동일하게 반환
 
 - 날짜와 날짜 사이의 개월수 구하기
-months_between((시작 날짜, 종료 날짜),개월 수)
+months_between((시작 날짜, 종료 날짜),소수점 자리 수)
 ==> 개월 수를 소수점 첫째 자리까지 반올림
 e.g. select employee_id, hire_date, round(months_between(sysdate, hire_date),1) from employees;
      ==> hire_date부터 현재까지의 개월수를 소수 1번째 자리까지 반올림함
@@ -654,10 +774,14 @@ where b2.publisher=b1.publisher);
 ===============================================================
 
 NVL 함수:
-기본 형태: NVL("값", "지정값")
+기본 형태: NVL("값/변수명", "지정값")
 e.g. select name 이름, NVL(phone,'연락처없음') 전화번호
      from customer;
      select*from customer;
+e.g. select last_name, manager_id,
+     nvl(to_char(manager_id), 'CEO') from employees;
+e.g. select last_name, manager_id,
+     nvl(to_char(manager_id), 'CEO') revised_id from employees;
 
 
 rownum 함수:
