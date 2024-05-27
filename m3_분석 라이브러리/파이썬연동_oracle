@@ -1,0 +1,108 @@
+<< 주피터 노트북에서 오라클 설치 >>
+
+!pip install cx_Oracle -q
+
+
+===================================================
+
+<< 오라클 DB에 저장된 데이터를 데이터프레임으로 불러오기 >>
+
+# 오라클과 판다스 import :
+import cx_Oracle 
+import pandas as pd 
+
+# 1. 데이터베이스 연결:
+  con=cx_Oracle.connect("사용자이름", "비밀번호", "세부정보의 로컬호스트:포트/SID")
+     e.g. con=cx_Oracle.connect("c##hr","hr","localhost:1521/xe")
+# 2. 데이터베이스와의 상호작용을 위한 커서를 생성:
+cur=con.cursor()
+# 3. 오라클에서 employees 테이블의 모든 데이터를 선택하는 쿼리를 실행:
+cur.execute('select*from EMPLOYEES')
+# 4. 쿼리 결과를 모두 가져와 res 변수에 저장:
+res=cur.fetchall()
+# 5. 데이터를 데이터프레임으로 변환:
+df=pd.DataFrame(res)
+
+
+<< DB에 저장된 column 이름 불러오기 >>
+  
+# 1. EMPLOYEES 테이블의 컬럼 이름을 조회하는 쿼리를 실행
+      e.g. col=[('EMPLOYEE_ID',), ('FIRST_NAME',), ('LAST_NAME',), ('SALARY',)]
+cur.execute ("select column_name from user_tab_columns where table_name='EMPLOYEES'")
+# 2. 컬럼 이름 결과를 모두 가져와 col 변수에 저장
+col=cur.fetchall()
+# 3. 컬럼 이름 리스트 생성
+li=[]
+for i in col:
+    for j in i:
+      li.append(i)
+# 4. 데이터프레임 컬럼 이름 설정
+df.columns=li
+# 처음 5개 행에 대한 데이터만 불러오기
+print(df.head())
+# 5. 커서를 닫기
+cur.close()
+# 6. 데이터베이스 연결을 닫기
+con.close()
+
+
+===================================================
+      
+<< 통계 요약본 보기 >>
+
+변수명.describe()
+    e.g. df.describe()
+
+===================================================
+
+<< 테이블 생성 >>
+
+# create
+import cx_Oracle
+conn=cx_Oracle.connect("c##hr", "hr", "localhost:1521/xe")
+cs=conn.cursor()
+sql="create table sample1(id varchar2(10), score number)"
+cs.execute(sql)
+
+  
+<< 테이블에 데이터 입력 >>
+  
+# insert (하나하나 데이터 입력할 때)
+sql="insert into sample1(id, score) values(1,100)"
+cs.execute(sql)
+conn.commit()
+
+  
+# insert (여러개 입력)
+# :1과 :2는 바인딩 변수로, 나중에 값을 대체하여 사용
+for i in range(10):
+    sql="insert into sample1 values(:1, :2)"
+    cs.execute(sql,(i,100*i))
+conn.commit()
+
+  
+<< 테이블에 있는 데이터 수정 >>
+
+# update
+sql="update SAMPLE1 set score=50 where id='0'"
+cs.execute(sql)
+cs.close()
+conn.commit()
+conn.close()
+  
+  
+<< 테이블 삭제 >>
+
+# drop
+import cx_Oracle
+conn=cx_Oracle.connect("c##hr","hr","localhost:1521/xe")
+cs=conn.cursor() # <== 오라클 명령어와 파이썬의 것을 연결시켜주는 통로
+sql="drop table sample1"
+cs.execute(sq1)
+cs.close()
+conn.commit()
+conn.close()
+
+
+
+      
