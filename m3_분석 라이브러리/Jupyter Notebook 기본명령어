@@ -1,5 +1,8 @@
 << Jupyter Notebbok 기본명령어 >>
 
+- 파이썬 버전 확인 :
+    !python --version
+
 - 프로그램 다운로드 된 경로 확인 : 
     !where 프로그램명
       e.g. !where python
@@ -15,13 +18,30 @@
         >> %ls는 IPython에서 제공하는 매직 명령어로, 파일 및 디렉토리 목록을 표시. 이는 운영 체제에 관계없이 동일한 방식으로 작동
 
 - 파일 생성: 
+    with open('example.txt','w')as file:
+        file.write("This is an example file.")
+
+- 파일 쓰기:
+    with open('example.txt','r')as file:
+        txt=file.read()
+        print(txt)
 
 - 파일 이름 변경:
+    !move example.txt new_example.txt
+
+- 파일 복사:
+    !copy new_example.txt .\test_dir\copy_example.txt
 
 - 파일 삭제:
+    !del example.txt
 
 - 디렉토리 생성:
+    !mkdir test_dir
 
 - 디렉토리 이동:
+    %cd test_dir
 
 - 디렉토리 삭제:
+    !rmdir /S /Q test_dir
+    ==> /S : test_dir 안에 있는 모든 파일과 서브디렉토리를 삭제
+    ==> /Q : 디렉토리 삭제하기 전에 사용자에게 확인 메시지를 묻지 않고 바로 삭제
