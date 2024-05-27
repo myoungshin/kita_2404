@@ -1,0 +1,152 @@
+<< Series 만들기 >>
+
+기본 형태:
+  변수명1=[데이터1, 데이터2, ..., 데이터n]
+    ==> 변수명1은 데이터를 담는 변수
+  변수명2=pd.Series(변수명1, index=list('인덱스 라벨 리스트하기'))
+    ==> 변수명2는 변수명1에 담은 데이터를 시리즈화 시킴
+  print(변수명2)
+  
+
+[ 딕셔너리로 series 만들기]
+
+  import pandas as pd
+  dict_data={'a':1,'b':2,'c':3}
+    ==> key:value 구조를 갖는 딕셔너리를 만들고 변수 dict_data에 저장
+  sr=pd.Series(dict_data)
+  print(sr)
+
+[ 리스트로 series 만들기]
+
+  list_data=['2019-07-02', 3.14, 'ABC', 100, True]
+  sr=pd.Series(list_data)
+    ==> 번호가 아닌 abcde 로 인덱스를 주고 싶다면 아래처럼 코딩:
+        sr=pd.Series(list_data, index=list('abcde'))
+  print(sr, type(sr))
+
+[ 튜플 series 만들기]
+
+  tup_data=('kevin', '2019-07-02', '남', True)
+  sr=pd.Series(tup_data,index=['이름', '생년월일','성별', '학생여부'])
+  print(sr,type(sr))
+
+[ series -> list ]
+변수명1=변수명2.tolist() : 시리즈 변수2를 새로운 변수1에 리스트 형태로 변환하여 저장
+  e.g. list_from_series=s2.tolist()
+  ==> 결과: [11, 13, 15, 17, 19]
+  ==> s2 원래 형태/값:
+        a    11
+        b    13
+        c    15
+        d    17
+        e    19
+        dtype: int64 <class 'pandas.core.series.Series'>
+
+[ series -> dictionary ]
+변수명1=변수명2.to_dict()
+  e.g. dict_from_series=s2.to_dict()
+       dict_from_series
+       ==> 결과: {'a': 11, 'b': 13, 'c': 15, 'd': 17, 'e': 19}
+  
+[ series -> dataframe ]
+변수명1=변수명2.to_frame(name='value')
+  ==> 끝에 name='value'는 데이터가 있는 column 이름
+  e.g. df_from_series=s2.to_frame(name='Value')
+       df_from_series
+  ==> 결과: 	
+          Value
+        a	11
+        b	13
+        c	15
+        d	17
+        e	19
+
+=============================================================
+
+<< 인덱싱 >>
+
+기본 형태:
+  print(변수명[인덱스 번호 혹은 인덱스 이름]_
+  ** 변수명 : 데이터를 series 형태로 바꿀때 쓴 인덱스 번호
+  ** 한번에 2개 이상의 인덱스를 넣어 출력 값 받을 수 있음 
+
+  print(sr[0])
+  print(sr['이름'])
+  print(sr[[1,2]]) 
+  ==> 한번에 2개 이상의 인덱스의 값을 확인할 때는 key, value가 같이 나옴
+  ==> 한번에 2개 이상 출력 시 인덱스를 한번 더 리스트 형태로 감싸야함 
+
+=============================================================
+
+  << 배열 만들기 >>
+  파이썬에는 배열이 없지만 판다스를 통해 사용 가능함
+
+  기본형태 1:
+    import numpy as np
+    변수명1=np.arange(시작, 끝, 스텝)
+    변수명2=pd.Series(변수명1, index=['인덱스1',...,'인덱스n'])
+    print(변수명2)
+
+  기본형태 2:
+    import numpy as np
+    변수명1=np.arange(시작, 끝, 스텝)
+    변수명2=['인덱스1, ...,'인덱스n']
+    변수명3=pd.Series(변수명1, index=변수명2)
+    변수명3.name='객체이름'
+    변수명3.index.name='인덱스이름'
+    print(변수명3)
+
+    e.g. 
+    import numpy as np
+    data=np.arange(1000,5000,1000)
+    states=['Califonia','Ohio','Oregon','Texas']
+    obj=pd.Series(data,index=states) # <== index=states 에서 index 빠져도 테이블은 잘 나옴 
+    
+    obj.name='population' # <= 객체 이름 
+    obj.index.name='state'
+    print(obj)
+        
+      결과값:     
+      state
+      Califonia    1000
+      Ohio         2000
+      Oregon       3000
+      Texas        4000
+      Name: population, dtype: int64
+      
+=============================================================
+
+<< 결측치 처리 (null 값 처리) >>
+
+None과 np.nan의 차이
+- None : 파이썬의 내장형 객체로 주로 객체형 데이터에서 사용
+- np.nan : 부동 소수점으로 취급되며 주로 숫자형 데이터에서 사용
+- 연산 시 np.nan은 NaN 결과를 반환하는 반면 None은 TypeError를 발생시킨다
+  ** 문자/객체에 값이 없는 경우엔 None, 연산이 필요한 숫자형으로 값 없음을 표현할 때는 np.nan
+
+변수명.키이름=np.nan : 해당 키에 들어가 있는 값을 NaN으로 대체
+
+변수명.isnull() : null값이면 true, 아니라면 false를 반환
+
+변수명.isnotnull() : null값이면 false, 아니라면 true를 반환
+
+변수명.fillna(값) : null 값 대신 다른 값으로 대체 시 
+
+변수명.isnull().sum() : 결측치 찾아서 더하기 (몇개의 결측치가 있는지)
+
+변수명.dropna() : 결측치 삭제 (null이 있는 해당 데이터 자체를 삭제)
+
+=============================================================
+
+<< 시리즈 연산 >>
+
+값 더하기: 
+  시리즈2=시리즈1+더할 값
+  e.g. series_plus_10=series+10
+
+
+
+
+
+
+  
