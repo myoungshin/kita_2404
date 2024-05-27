@@ -1,0 +1,171 @@
+<< 데이터프레임 >>
+
+- 데이터프레임은 2차원 배열. R의 데이터프레임에서 유래.
+- 데이터프레임의 열은 각각 시리즈 개체.
+- 시리즈를 열벡터라고 하면 데이터프레임은 여러개의 열벡터들이 같은 행 인덱스를 기준으로 줄지어 결합된 2차원 벡터 또는 행렬.
+- 선형대수학에서 열 벡터(m x 1 행렬)는 m 원소들의 단일 열 행렬
+- 행 벡터(1 x m 행렬)은 m원소들의 단일 행 행렬.
+- 리스트, 딕셔너리, ndarray 등 다양한 데이터로부터 생성
+- 반대로 리스트, 딕셔너리, ndarray 등으로 변환될 수 있음
+
+=============================================================
+
+<< 데이터프레임 생성 >>
+
+기본 형태:
+  변수명=pd.DataFrame(데이터가 들었는 변수명, 
+                      index=['인덱스1',...,'인덱스n'],
+                      columns=['열이름1',...'열이름n'])
+                      ** index 는 행 이름 개별 지정
+                      ** columns 는 열 이름 개별 지정
+
+    e.g.
+    import random
+    import numpy as np
+    import pandas as pd
+    np.random.seed(0) # <== seed(숫자)를 먼저 넣어주면 생성된 랜덤 숫자가 동일한 seed 숫자가 유지되는 한, 몇번을 다시 돌려도 같은 숫자로 고정되어서 나옴
+    data=np.random.randint(100,120,size=(3,3))
+    print(data,type(data))
+    
+    df=pd.DataFrame(data,index=['d1','d2','d3'],
+                    columns=['pd','sales','inv'])
+    print(df)
+
+** 데이터 랜덤하게 생성하고 싶다면:
+  np.random.seed(0) # <== seed(숫자)를 먼저 넣어주면 생성된 랜덤 숫자가 동일한 seed 숫자가 유지되는 한, 몇번을 다시 돌려도 같은 숫자로 고정되어서 나옴
+  data=np.random.randint(시작,끝,size=(행 개수,열 개수))
+  
+  e.g. np.random.seed(0) 
+       data=np.random.randint(100,120,size=(3,3))
+
+<< 데이터프레임 행 값 수정 >>
+수정 시 loc, iloc 모두 가능
+
+기본 형태:
+  변수명.loc['행이름']=수정값
+
+
+<< 데이터프레임 행 값 추가 >>
+행 추가 시 loc로만 사용 가능.
+
+기본 형태:
+  변수명.loc['행이름']=추가할 값
+    e.g df.loc['d4']=0
+    ==> 데이터 수정 때와 같은 방식임
+
+<< 데이터 프레임 열 값 추가 >>
+  변수명.loc[:, '열이름']=추가할 값
+    e.g. df.loc[:,'profit']=10
+
+
+<< 데이터프레임 column이름 수정 >>
+  변수명.rename(columns={열1:'수정할 열이름',...열n:'수정할 열이름'}, inplace=True) 
+    e.g. df.rename(columns={0:'id',1:'gender',2:'age',3:'region'}, inplace=True)
+    ==> inplace=True : 이렇게 바꾼 것을 원본에 반영하겠다는 의미 
+
+<< 데이터프레임의 행 삭제 >>
+  변수명.drop([삭제할 인덱스], axis=0, inplace=True)
+    e.g. df.drop([0],axis=0,inplace=True)
+    ==> axis=0 : 축이 행. 즉, 행 삭제
+
+<< 데이터프레임의 데이터타입 일괄 수정 >>
+  변수명.astype(변경할 데이터타입)
+  e.g. df4.astype(float)
+
+<< 특정 열의 데이터타입 수정 >>
+  변수명1['열이름']=변수명1['열이름'].astype(변경할 데이터타입)
+  e.g. df4['B']=df4['B'].astype(float)
+
+<< 테이터프레임의 각 열의 테이터타입 확인 >>
+  print(변수명1.dtypes)
+  e.g. print(df4.dtypes)
+
+    
+<< 데이터프레임 복사 >>
+변수명1=변수명2.copy()
+  e.g. df1.df.copy()
+       ==> df를 카피하는 것임
+
+=============================================================
+
+<< 특정 열 조건에 해당되는 행만 선택 >>
+변수명1=변수명2[변수명2['열이름']조건]
+e.g. df2_sel=df2[df2['Math']>=80]
+     print(df2_sel)
+     ==> df2 테이터프레임에서 Math 열의 값이 80 이상인 케이스만 df2_sel 에 담아서 출력
+
+<< 특정 열 기준으로 소팅 >>
+소팅 방식 여러개 있음
+
+A) 새로 변수 만들어서 소팅 
+- 오름차순
+    변수명1=변수명2.sort_values(by="열이름")
+- 내림차순
+    변수명1=변수명2.sort_values(by="열이름", ascending=False)
+
+B) 기존 변수에서 소팅 & 원본에 반영
+- 오름차순
+    변수명1.sort_values(by"열이름", inplace=True)
+    e.g. df2_sel.sort_values(by="English", inplace=True)
+- 내림차순
+    변수명1.sort_values(by"열이름", ascending=False, inplace=True)
+    e.g. df2_sel.sort_values(by="English", ascending=False, inplace=True)
+
+=============================================================
+
+<< 인덱싱 >>
+DataFrame과 Series에서 데이터의 특정 위치나 라벨에 접근하기 위한 중요한 도구이며 두 메서드는 각각 고유한 용도를 가지고 있음
+
+iloc (Integer Location)
+- 정수 인덱스 기반으로 데이터에 접근하는 메서드. 즉, DataFrame이나 Series의 특정 위치에 있는 데이터를 선택할 때 사용.
+- 슬라이싱 지원: Python 리스트와 유사하게 슬라이싱을 지원.
+- 끝점 포함하지 않음: 슬라이싱 시 끝점은 포함하지 않는다.
+- 기본 형태:
+    변수명.iloc[행 인덱스, 열 인덱스]
+    변수명.iloc[행 인덱스 시작점:끝점, 열 인덱스 시작점: 끝점])
+    e.g. print(df.iloc[0,1])
+    e.g. print(df.iloc[0:2,0:2])
+    print(df.iloc[1],'\n') 
+    # [] 안에 1개의 값만 있다면 행을 뜻함. 따라서 2번째 인덱스 (d2)에 있는 pd, sales, inv 값이 출력됨  
+
+loc (Label Location)
+- 라벨 인덱스 기반으로 데이터에 접근하는 메서드. 즉, DataFrame이나 Series의 라벨 이름을 사용하여 데이터에 접근.
+- 슬라이싱 지원: 라벨을 사용하여 슬라이싱을 지원.
+- 끝점 포함: 슬라이싱 시 끝점을 포함.
+- 기본 형태:
+    변수명.iloc[행 인덱스, 열 인덱스]
+    변수명.iloc[행 인덱스 시작점:끝점, 열 인덱스 시작점: 끝점])
+    e.g. print(df.loc['a','B'])
+    e.g. print(df.loc['a':'b','A':'B'])
+
+=============================================================
+
+<< 넘파이 랜덤 함수 >>
+
+
+
+
+
+=============================================================
+
+<< 배열 -> 리스트 >>
+  변수명1=ar.tolist() 
+    e.g. df_list=ar.tolist()
+
+<< 배열 -> 딕셔너리 >>
+  변수명1=변수명2.to_dict('키 이름')
+    e.g.dict=df1.to_dict('list')
+    
+
+=============================================================
+
+<< 공공데이터 소스 >>
+https://www.data.go.kr/
+
+
+
+
+
+
+
+
