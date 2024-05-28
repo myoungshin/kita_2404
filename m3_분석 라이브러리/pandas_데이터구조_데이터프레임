@@ -11,16 +11,17 @@
 =============================================================
 
 << 데이터프레임 정보 확인 >>
+
 변수명.info() 
 - 인덱스, 열 개수, 각 열 별 non-null 개수, 데이터 타입 정보 제공
 
 
-<< 데이터프레임의 열이름 확인 >> 
 데이터프레임.columns
+- 데이터프레임의 열이름 확인 
 
 
-<< 데이터프레임의 통계적 정보 확인 >>
 데이터프레임.describe()
+- 데이터프레임의 통계적 정보 확인
 - count, mean, std, min, 25%, 50%, 75%, max 값 제공
   e.g. df2.describe()
 
@@ -35,7 +36,6 @@
                       columns=['열이름1',...'열이름n'])
                       ** index 는 행 이름 개별 지정
                       ** columns 는 열 이름 개별 지정
-
     e.g.
     import random
     import numpy as np
@@ -49,191 +49,257 @@
     print(df)
 
 ** 데이터 랜덤하게 생성하고 싶다면:
-  np.random.seed(0) # <== seed(숫자)를 먼저 넣어주면 생성된 랜덤 숫자가 동일한 seed 숫자가 유지되는 한, 몇번을 다시 돌려도 같은 숫자로 고정되어서 나옴
+  np.random.seed(0) 
   data=np.random.randint(시작,끝,size=(행 개수,열 개수))
-  
+  ==> seed(숫자)를 먼저 넣어주면 생성된 랜덤 숫자가 동일한 seed 숫자가 유지되는 한, 
+      몇번을 다시 돌려도 같은 숫자로 고정되어서 나옴
+
   e.g. np.random.seed(0) 
        data=np.random.randint(100,120,size=(3,3))
 
-=============================================================
 
-<< 데이터프레임 행 값 수정 >>
-수정 시 loc, iloc 모두 가능
-
-기본 형태:
-  데이터프레임.loc['행이름']=수정값
-
-
-<< 데이터프레임 행 값 추가 >>
-행 추가 시 loc로만 사용 가능.
-
-기본 형태:
-  데이터프레임.loc['행이름']=추가할 값
-    e.g df.loc['d4']=0
-    ==> 데이터 수정 때와 같은 방식임
-
-
-<< 데이터프레임 열 값 추가 >>
-  데이터프레임.loc[:, '열이름']=추가할 값
-    e.g. df.loc[:,'profit']=10
-
-<< 데이터프레임에 열 추가 >>
-  데이터프레임['추가할 열이름']=list(행마다 들어갈 값)
-  e.g. df1['index']=list('가나다라마')
-
-<< 데이터프레임의 인덱스 열 변경 >>
-  데이터프레임.set_index('인덱스 열 이름')
-  e.g. df2=df1.set_index('index')
-
-<< 데이터프레임의 인덱스 열 원복 >>
-  데이터프레임.reset_index()
-  e.g. df3=df21.reset_index()
-
-<< 데이터프레임의 인덱스 열 이름 삭제 >>
-  데이터프레임.index.name=None
-  e.g. df22.index.name=None
-
-<< 데이터프레임의 인덱스 추가/삭제/수정 >>
-  변수명=['새로 보여줄 인덱스 리스팅']
-  데이터프레임.reindex(변수명)
-  e.g. new_index=['r0','r1','r2','r3','r4']
-       df1=df5.reindex(new_index,fill_value=0)
-       ==> 기존 인덱스가 몇개든 상관없이 new_index에서 지정한 개수만큼만 보여짐
-
-<< 인덱스 수정 >>
-  데이터프레임.reindex(인덱스명,fill_value=0)
-  ==> 새로 추가되는 인덱스의 행에 대한 값은 모두 0으로 처리
-  e.g. new_index=['r0','r1','r2','r3','r4','r5','r6','r7','r8']
-       df5=df.reindex(new_index,fill_value=0)
-
-<< 기존 인덱스에 인덱스 새로 추가하고 싶을 경우 >>
-- union 사용해야함
-  1. 추가하고 싶은 인덱스를 새 변수명으로 만들어주고
-  2. 새 변수명으로 기존인덱스명.union(추가할 인덱스 변수명)
-  3. 데이터프레임을 union으로 합친 인덱스로 재인덱싱
-  e.g. 
-        # 추가하고 싶은 인덱스
-        add_index=pd.date_range('2024-01-05',periods=3,freq='3D')
-      
-        # 기존 인덱스와 새로운 인덱스 합치기
-        new_index=dates.union(add_index) # 기존 인덱스: dates. 추가할 인덱스: add_index
-        
-        # 데이터프레임을 새로운 인덱스로 재인덱싱, fill_value로 null값 0
-        df5_4=df5_3.reindex(new_index,fill_value=0)
-
-
-
-<< 데이터프레임의 인덱스 삭제 >>
-1. 슬라이싱
-   데이터프레임.drop(데이터프레임.index[시작:끝])
-   e.g. df1=df5.drop(df5.index[5:9])
-
-2. drop
-   데이터프레임.drop(['삭제할 인덱스 리스팅'], axis=0)
-   e.g. f1=f5.drop(['r5','r6','r7','r8'],axis=0)
-
-<< 인덱스 내림차순 정렬 >>
-  데이터프레임.sort_index(ascending=False)
-  e.g. df1_s=df1.sort_index(ascending=False)
-
-<< 특정 value 기준으로 정렬 >>
-  데이터프레임.sort_values(by='열이름', ascending=False)
-  e.g. df1_c=df1.sort_values(by='c',ascending=False)
-
-<< 전치 (행과 열 바꾸기) >>
-  데이터프레임.transpose()
-  e.g. df1_t=df1.transpose()
-
-
-
-
-<< 데이터프레임 column이름 수정 >>
-  데이터프레임.rename(columns={열1:'수정할 열이름',...열n:'수정할 열이름'}, inplace=True) 
-    e.g. df.rename(columns={0:'id',1:'gender',2:'age',3:'region'}, inplace=True)
-    ==> inplace=True : 이렇게 바꾼 것을 원본에 반영하겠다는 의미 
-
-<< 데이터프레임의 행 삭제 >>
-  데이터프레임.drop([삭제할 인덱스], axis=0, inplace=True)
-    e.g. df.drop([0],axis=0,inplace=True)
-    ==> axis=0 : 축이 행. 즉, 행 삭제
-
-<< 데이터프레임의 특정 열 삭제 >>
-  데이터프레임.drop('열이름', axis=1)
-  e.g. df21=df2.drop('e', axis=1)
-
-<< 데이터프레임의 데이터타입 일괄 수정 >>
-  데이터프레임.astype(변경할 데이터타입)
-  e.g. df4.astype(float)
-
-<< 특정 열의 데이터타입 수정 >>
-  데이터프레임['열이름']=데이터프레임['열이름'].astype(변경할 데이터타입)
-  e.g. df4['B']=df4['B'].astype(float)
-
-<< datetime으로 데이터타입 변환 >>
-  데이터프레임['열이름']=pd.to_datetime(데이터프레임['열이름'])
-  e.g. df4['C']=pd.to_datetime(df4['C'])
-
-<< 테이터프레임의 각 열의 테이터타입 확인 >>
-  print(변수명1.dtypes)
-  e.g. print(df4.dtypes)
-
-    
 << 데이터프레임 복사 >>
+
 변수명1=변수명2.copy()
   e.g. df1.df.copy()
        ==> df를 카피하는 것임
+
+
+<< 전치 (행과 열 바꾸기) >>
+데이터프레임.transpose()
+  e.g. df1_t=df1.transpose()
+
+
+=============================================================
+
+<< 생성된 데이터프레임에서의 수정 >>
+
+---- [ 행/열의 값 수정 ] ----
+
+- 행 값 수정 :
+    기본 형태:
+      데이터프레임.loc['행이름']=수정값
+
+- 행 값 추가 :
+  ** 행 추가 시 loc로는 가능 iloc는 불가능
+    기본 형태:
+      데이터프레임.loc['행이름']=추가할 값
+        e.g df.loc['d4']=0
+        ==> 데이터 수정 때와 같은 방식임
+
+- 열 값 추가 :
+      데이터프레임.loc[:, '열이름']=추가할 값
+        e.g. df.loc[:,'profit']=10
+
+
+---- [ 헹/열 수정 ] ----
+
+- 열 추가 :
+    데이터프레임['추가할 열이름']=list(행마다 들어갈 값)
+    e.g. df1['index']=list('가나다라마')
+
+
+- 열이름 수정 :
+    데이터프레임.rename(columns={열1:'수정할 열이름',...열n:'수정할 열이름'}, inplace=True) 
+      e.g. df.rename(columns={0:'id',1:'gender',2:'age',3:'region'}, inplace=True)
+      ==> inplace=True : 이렇게 바꾼 것을 원본에 반영하겠다는 의미 
+
+- 열, 행 이름 동시에 변경 :
+    columns={'기존 열이름':'수정할 열이름',...}
+    index={'기존 행이름':'수정할 행이름',...}
+    데이터프레임.rename(columns=columns, index=index, inplace=True)
+
+
+- 특정 열 삭제 
+    데이터프레임.drop('열이름', axis=1)
+    e.g. df21=df2.drop('e', axis=1)
+
+- 특정 행 삭제
+    데이터프레임.drop([삭제할 인덱스], axis=0, inplace=True)
+      e.g. df.drop([0],axis=0,inplace=True)
+      ==> axis=0 : 축이 행. 즉, 행 삭제
+
+
+---- [ 데이터타입 수정 ] ----
+
+- 데이터프레임의 데이터타입 일괄 수정 
+    데이터프레임.astype(변경할 데이터타입)
+    e.g. df4.astype(float)
+
+- 특정 열의 데이터타입 수정
+    데이터프레임['열이름']=데이터프레임['열이름'].astype(변경할 데이터타입)
+    e.g. df4['B']=df4['B'].astype(float)
+
+- datetime으로 데이터타입 변환 
+    데이터프레임['열이름']=pd.to_datetime(데이터프레임['열이름'])
+    e.g. df4['C']=pd.to_datetime(df4['C'])
+
+- 테이터프레임의 각 열의 테이터타입 확인 
+    print(변수명1.dtypes)
+    e.g. print(df4.dtypes)
+
+  
+---- [ 인덱스 수정 ] ----
+
+- 인덱스 열 변경 :
+    데이터프레임.set_index('인덱스 열 이름')
+    e.g. df2=df1.set_index('index')
+
+- 인덱스 열 원복 :
+    데이터프레임.reset_index()
+    e.g. df3=df21.reset_index()
+
+- 인덱스 열 이름 삭제 :
+    데이터프레임.index.name=None
+    e.g. df22.index.name=None
+
+- 인덱스 삭제 :
+    1. 슬라이싱 :
+       데이터프레임.drop(데이터프레임.index[시작:끝])
+       e.g. df1=df5.drop(df5.index[5:9])
+    
+    2. drop :
+       데이터프레임.drop(['삭제할 인덱스 리스팅'], axis=0)
+       e.g. f1=f5.drop(['r5','r6','r7','r8'],axis=0)
+
+
+- 인덱스 추가/삭제/수정 
+    변수명=['새로 보여줄 인덱스 리스팅']
+    데이터프레임.reindex(변수명)
+    e.g. new_index=['r0','r1','r2','r3','r4']
+         df1=df5.reindex(new_index,fill_value=0)
+         ==> 기존 인덱스가 몇개든 상관없이 new_index에서 지정한 개수만큼만 보여짐
+
+- 인덱스 추가/삭제/수정 + NaN은 0처리
+    데이터프레임.reindex(인덱스명,fill_value=0)
+    ==> 새로 추가되는 인덱스의 행에 대한 값은 모두 0으로 처리
+    e.g. new_index=['r0','r1','r2','r3','r4','r5','r6','r7','r8']
+         df5=df.reindex(new_index,fill_value=0)
+
+- 기존 인덱스에 인덱스 새로 추가하고 싶을 경우 
+    ** union 사용
+      1. 추가하고 싶은 인덱스를 새 변수명으로 만들어주고
+      2. 새 변수명으로 기존인덱스명.union(추가할 인덱스 변수명)
+      3. 데이터프레임을 union으로 합친 인덱스로 재인덱싱
+      e.g. 
+            # 추가하고 싶은 인덱스
+            add_index=pd.date_range('2024-01-05',periods=3,freq='3D')
+          
+            # 기존 인덱스와 새로운 인덱스 합치기
+            new_index=dates.union(add_index) # 기존 인덱스: dates. 추가할 인덱스: add_index
+            
+            # 데이터프레임을 새로운 인덱스로 재인덱싱, fill_value로 null값 0
+            df5_4=df5_3.reindex(new_index,fill_value=0)
+
+
+---- [ 인덱스 정렬 ] ----
+
+- 인덱스 내림차순 정렬 :
+    데이터프레임.sort_index(ascending=False)
+    e.g. df1_s=df1.sort_index(ascending=False)
+
+- 특정 value 기준으로 정렬 :
+    데이터프레임.sort_values(by='열이름', ascending=False)
+    e.g. df1_c=df1.sort_values(by='c',ascending=False)
+
 
 =============================================================
 
 << 데이터프레임 병합 >>
 
+---- [ 데이터프레임끼리의 병합 ] -----
 - 행방향 병합 (가로로)
-pd.concat([데이터프레임1, 데이터프레임2],axis=1)
-==> 데이터프레임1 우측으로 데이터프레임2가 붙음
+    pd.concat([데이터프레임1, 데이터프레임2],axis=1)
+    ==> 데이터프레임1 우측으로 데이터프레임2가 붙음
+
 
 - 열방향 병합 (세로로)
-pd.concat([데이터프레임1, 데이터프레임2])
-==> 데이터프레임1 밑으로 데이터프레임2가 붙음
+    pd.concat([데이터프레임1, 데이터프레임2])
+    ==> 데이터프레임1 밑으로 데이터프레임2가 붙음
+
+- 단순 더하기로 이을 수 있음:
+  데이터프레임1+데이터프레임2
+  e.g. df1=pd.DataFrame(np.arange(12.).reshape((3,4)),columns=list('abcd'))
+       df2=pd.DataFrame(np.arange(20.).reshape((4,5)),columns=list('abcde'))
+       df1+df2
+       ==> 결과:        
+          a	b	c	d	e
+          0	0.0	2.0	4.0	6.0	NaN
+          1	9.0	NaN	13.0	15.0	NaN
+          2	18.0	20.0	22.0	24.0	NaN
+          3	NaN	NaN	NaN	NaN	NaN
+          ** 데이터프레임끼리 합쳐질 때는 행과 열의 수가 맞지 않아도 됨.
+             다만, 행과 열의 수가 맞지 않은 곳의 값은 NaN이 들어가게 됨 (연산이 불간능하므로)
+
+
+---- [ 시리즈 --> 데이터프레임 병합 ] ----
+
+- 여러 시리즈를 하나로 합칠 때:
+  pd.concat([시리즈1, 시리즈2, 시리즈3], axis=1)
+  e.g. add=st1+st2
+       sub=st1-st2
+       mul=st1*st2
+       div=round((st1/st2),2)
+       df=pd.concat([add,sub,mul,div],axis=1)
+       
+- 여러 시리즈를 하나의 데이터프레임으로 만들 때:
+  데이터프레임명=pd.DataFrame([시리즈1, 시리즈2,...])
+  e.g. result=pd.DataFrame([add,sub,mul,div])
+
+- 여러 시리즈를 하나의 데이터 프레임으로 합치면서 null값은 0으로 만들어준다면,
+  시리즈 단에서 fill_value=0 사용해서 null -> 0으로 미리 대체해주기 
+  e.g. st1 = pd.Series({'국어':np.nan,'영어':80,'수학':90})
+       st2 = pd.Series({'수학':80,'국어':90})
+      
+       ad = st1.add(st2,fill_value=0)
+       su = st1.sub(st2,fill_value=0)
+       mu = st1.mul(st2,fill_value=0)
+       di = st1.div(st2,fill_value=0)
+      
+       df = pd.DataFrame([add,sub,mul,div],
+                            index=['덧셈','뺄셈','곱셈','나눗셈'])
+
+
+---- [ 인덱스 수정 ] ----
+
+- 합친 시리즈의 인덱스 이름 수정:
+  변수명.columns=['인덱스 이름 리스팅']
+  e.g. df.columns=['덧셈', '뺄셈','곱셈','나눗셈']
+
+- 데이터프레임의 인덱스 이름 수정:
+  변수명=pd.DataFrame([시리즈1,시리즈2,시리즈3],index=['덧셈', '뺄셈','곱셈','나눗셈'])
+  e.g. result=pd.DataFrame([add,sub,mul,div],index=['덧셈', '뺄셈','곱셈','나눗셈'])
+
+
 
 =============================================================
 
-<< 열, 행 이름 변경 >>
-columns={'기존 열이름':'수정할 열이름',...}
-index={'기존 행이름':'수정할 행이름',...}
-데이터프레임.rename(columns=columns, index=index, inplace=True)
+<< 데이터프레임에서 평균 구하기 >>
 
+- 특정 행의 평균 값 구하기
+    데이터프레임[column].mean()
+      e.g.  columns=['Math','English', 'Science','History'] 
+            ==> name을 제외한 column 들에 적용하기 위해 따로 리스트 만들어주고
+            for column in columns: 
+                df2[column].fillna(df2[column].mean(),inplace=True) 
+                ==> null이 있는 곳에 각 column의 mean값 대체, 원본에 반영
 
-=============================================================
+- 특정 행만 제외하고 각 열의 평균 값 구하기
+      e.g. df2=df1.copy()
+           for column in df2.select_dtypes(include=[np.number]).columns:
+           ==> datatype이 숫자인 열만 선택해서 아래 내용을 적용해줌 
+               df1[column].fillna(df2[column].mean(), inplace=True)
 
-<< 특정 행의 평균 값 구하기 >>
-데이터프레임[column].mean()
-  e.g.  columns=['Math','English', 'Science','History'] 
-        ==> name을 제외한 column 들에 적용하기 위해 따로 리스트 만들어주고
-        for column in columns: 
-            df2[column].fillna(df2[column].mean(),inplace=True) 
-            ==> null이 있는 곳에 각 column의 mean값 대체, 원본에 반영
-
-<< 특정 행만 제외하고 각 열의 평균 값 구하기 >>
-  e.g. df2=df1.copy()
-       for column in df2.select_dtypes(include=[np.number]).columns:
-       ==> datatype이 숫자인 열만 선택해서 아래 내용을 적용해줌 
-           df1[column].fillna(df2[column].mean(), inplace=True)
-
-<< 특정 기준으로 평균 계산 >>
-변수명2=데이터프레임1['열이름1'].groupby(데이터프레임1['열이름2'].mean()
-  e.g. g=df3['Score'].groupby(df3['Name']).mean()
-
-<< 피벗 만들어서 정리 >>
-데이터프레임.pivot_table(index='열이름', columns='열이름', values='열이름', aggfunc='집계 기준')
-  ==> aggfunc= 집계하는 숫자는 mean으로 하라, 는 뜻
-  e.g. df3.pivot_table(index='Name',columns='Subject',values='Score',aggfunc='mean')
-
+- 특정 기준으로 평균 계산 
+    변수명2=데이터프레임1['열이름1'].groupby(데이터프레임1['열이름2'].mean()
+      e.g. g=df3['Score'].groupby(df3['Name']).mean()
 
 
 
 =============================================================
 
 << 특정 열 조건에 해당되는 행만 선택 >>
+
 변수명1=변수명2[변수명2['열이름']조건]
 e.g. df2_sel=df2[df2['Math']>=80]
      print(df2_sel)
@@ -322,6 +388,13 @@ loc (Label Location)
 ==> None을 넣지 않으면 인덱스 행이 중복되어 나옴
 e.g. file_data.to_csv('file_data.csv',index=None)
 
+
+=============================================================
+
+<< 피벗 만들어서 정리 >>
+데이터프레임.pivot_table(index='열이름', columns='열이름', values='열이름', aggfunc='집계 기준')
+  ==> aggfunc= 집계하는 숫자는 mean으로 하라, 는 뜻
+  e.g. df3.pivot_table(index='Name',columns='Subject',values='Score',aggfunc='mean')
 
 
 
