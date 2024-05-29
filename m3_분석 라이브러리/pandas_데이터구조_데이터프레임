@@ -270,30 +270,42 @@
   변수명=pd.DataFrame([시리즈1,시리즈2,시리즈3],index=['덧셈', '뺄셈','곱셈','나눗셈'])
   e.g. result=pd.DataFrame([add,sub,mul,div],index=['덧셈', '뺄셈','곱셈','나눗셈'])
 
-
-
 =============================================================
 
-<< 데이터프레임에서 평균 구하기 >>
+<< null 값 처리 >>
 
-- 특정 행의 평균 값 구하기
-    데이터프레임[column].mean()
-      e.g.  columns=['Math','English', 'Science','History'] 
-            ==> name을 제외한 column 들에 적용하기 위해 따로 리스트 만들어주고
-            for column in columns: 
-                df2[column].fillna(df2[column].mean(),inplace=True) 
-                ==> null이 있는 곳에 각 column의 mean값 대체, 원본에 반영
+- null 값 0으로 채우기 :
+  데이터프레임.fillna(채울 값)
+    e.g. df_filled_zero=df.fillna(0)
 
-- 특정 행만 제외하고 각 열의 평균 값 구하기
-      e.g. df2=df1.copy()
-           for column in df2.select_dtypes(include=[np.number]).columns:
-           ==> datatype이 숫자인 열만 선택해서 아래 내용을 적용해줌 
-               df1[column].fillna(df2[column].mean(), inplace=True)
+- null 값을 각 열의 평균값으로 채우기 :
+  데이터프레임.apply(lambda x:x.fillna(x.mean()), axis=0)
+    ==> lambda에서 나온 내용을 df에 apply (적용)함
+    ==> axis=0 : 행 방향
+    e.g. df_filled_mean=df.apply(lambda x:x.fillna(x.mean()),axis=0)
 
-- 특정 기준으로 평균 계산 
-    변수명2=데이터프레임1['열이름1'].groupby(데이터프레임1['열이름2'].mean()
-      e.g. g=df3['Score'].groupby(df3['Name']).mean()
+- null 값을 각 열의 중간값으로 채우기 :
+  데이터프레임.apply(lambda x:x.fillna(x.median()), axis=0)
+    e.g. df_filled_median=df.apply(lambda x:x.fillna(x.median()),axis=0) 
 
+- null 값이 포함된 행/열 삭제 : 
+  데이터프레임.dropna() # 행 삭제
+  데이터프레임.dropna(axis=1) # 열 삭제
+    e.g. df_dropped_rows=df.dropna()
+    ==> default로 axis=0이어서 (행에 적용) 함수에서 누락되어 보임
+    ==> axis=1로 하면 열에 적용됨
+
+- null 값을 앞의 값으로 채우기 :
+  데이터프레임.fillna(method='ffill')
+    e.g. df_ffill=df.fillna(method='ffill')
+
+- null 값을 뒤의 값으로 채우기 :
+  데이터프레임.fillna(method='bfill')
+    e.g. df_bfill=df.fillna(method='bfill')
+
+- replace 메서드로 대체 :
+  데이터프레임.replace(기존 값, 대체하고자하는 값)
+    e.g. df_replace_zero=df.replace(np.nan,0)
 
 
 =============================================================
@@ -378,6 +390,183 @@ loc (Label Location)
 << 날짜 범위로 인덱스 만들기 >>
 
 변수명=pd.date_range('시작날짜', periods=생성할 개수, freq='얼마 단위로')
+
+
+
+
+=============================================================
+
+<< 데이터프레임 연산 >>
+
+---- [ 시리즈 더하기 ] ----
+
+- 시리즈 더해서 데이터프레임 만들기
+
+  pd.DataFrame(시리즈1+시리즈2)
+  e.g. st1=pd.Series({'국어': 100, '영어': 80, '수학': 90})
+       st2=pd.Series({'수학': 80, '국어': 90, '영어': 80})
+       pd.DataFrame(st1+st2)
+
+  변수명=시리즈1+시리즈2
+  e.g. add=st1+st2
+       ==> 변수에다가 시리즈 연산을 담아 계산 시키는 것도 가능
+
+
+
+-----
+
+데이터프레임에 들어 있는 각 요소를 특정 인자로 일괄 계산 가능
+단, 아래 방법은 해당 인자를 기준으로 연산이 진행됨
+
+- 나누기
+  데이터프레임.rdiv(인자)
+  ==> 인자/요소 에 대한 계산 값이 데이터프레임에 반영됨
+      e.g. df1.rdiv(1)
+           ==> 값은 다음과 같이 계산되어 나옴: 1/요소
+
+
+
+=============================================================
+
+<< 데이터프레임에서 평균 구하기 >>
+
+- 특정 행의 평균 값 구하기
+    데이터프레임[column].mean()
+      e.g.  columns=['Math','English', 'Science','History'] 
+            ==> name을 제외한 column 들에 적용하기 위해 따로 리스트 만들어주고
+            for column in columns: 
+                df2[column].fillna(df2[column].mean(),inplace=True) 
+                ==> null이 있는 곳에 각 column의 mean값 대체, 원본에 반영
+
+- 특정 행만 제외하고 각 열의 평균 값 구하기
+      e.g. df2=df1.copy()
+           for column in df2.select_dtypes(include=[np.number]).columns:
+           ==> datatype이 숫자인 열만 선택해서 아래 내용을 적용해줌 
+               df1[column].fillna(df2[column].mean(), inplace=True)
+
+- 특정 기준으로 평균 계산 
+    변수명2=데이터프레임1['열이름1'].groupby(데이터프레임1['열이름2'].mean()
+      e.g. g=df3['Score'].groupby(df3['Name']).mean()
+
+
+
+
+
+
+=============================================================
+
+<< 그룹 연산 >>
+배너처럼 올려서 해당 그룹별로 데이터를 보고 싶을 때 쓰는 방식
+
+- 그룹 생성 및 활용 
+기본 형태: 
+  그룹객체명=데이터프레임.groupby(['열이름']) 
+  e.g.  df1=df[['age','fare','survived','class']]
+        grouped=df1.groupby(['class'])
+
+활용 예시:
+1. 그룹 객체를 iteration으로 출력하여 각 그룹에 대한 정보를 개별 확인하고 싶을 때:
+    for key, group in grouped:
+      print('* key : ',key)
+      print('* number : ',len(group))
+      print(group.head())    
+      ==> for문을 사용해서 grouped로 묶인 해당 열에 해당되는 묶음 별로
+          (e.g. class의 경우 first, second, third로 이루어져 있음)
+          key (grouped 내의 묶음 e.g. first), number (각 그룹의 n수), 보고자 하는 데이터 (e.g. df1)
+  
+2. 그룹 별 평균 값 보기
+    변수명=그룹객체명.mean()
+    e.g. average=grouped.mean()
+    ==> group별로 각 열에 대한 mean값 나옴
+
+3. 개별 그룹 선택
+    그룹=그룹객체명.get_group('그룹 객체에 속한 group이름')
+    e.g. group3=grouped.get_group('Third')
+
+4. 그룹 객체의 특정 group에 대한 통계학적 정보:
+    변수명.describe()
+    e.g. group3.describe()
+
+5. 각 그룹에 대한 모든 열의 표준편차 집계, 데이터프레임으로 반환
+    변수명=그룹객체명.std()
+    e.g. std_all=grouped.std()
+
+6. 각 그룹에 대한 특정 열의 표준편차를 집계하여 시리즈로 반환
+    변수명=그룹객체명.열이름.std()
+    e.g. std_fare=grouped.fare.std()
+
+
+- agg() 메서드 사용 
+
+1. 사용자 정의 함수로 인수 전달 :
+   def 사용자정의함수(인자):
+      return 기능
+   변수명=그룹객체명.agg(사용자정의함수)
+
+   e.g. def min_max(x): # 최대값 - 최소값 구하는 함수 생성
+        return x.max()-x.min()
+        agg_minmax=grouped.agg(min_max) # 그룹객체에 적용한 열 별 최대-최소값
+        ==> 결과값으로 각 그룹의 각 열에 대한 max-min 값이 출력되어 데이터프레임 형태로 나옴
+
+2. 내장함수 사용 :
+    변수명=그룹객체명.agg(['내장함수1','내장함수2',...])
+    ==> 내장함수는 str 형태로 ' ' 붙여줘야 작동함
+    e.g. agg_all=grouped.agg(['min','max','mean']) 
+
+3. 각 열마다 다른 함수 적용 :
+    변수명=그룹객체명.agg({'열이름':'내장함수','열이름':['내장함수',사용자함수],...})
+    ==> 하나의 열에 여러개의 함수 적용 가능
+        ==> 이 경우 [] 로 묶어줘야 함
+    ==> 사용자함수는 ' ' 붙이지 않음
+    e.g. agg_sep=grouped.agg({'fare':['min','max'],'age':'mean'})
+
+4. 특정 조건으로 필터링 :
+    변수명=그룹객체명.filter(lambda x:조건)
+    e.g. grouped_filter=grouped.filter(lambda x:len(x)>=200)
+         ==> 데이터 개수가 200개 이상인 그룹만 필터링하여 데이터프레임으로 반환
+
+5. 그룹별 count 구하기 :
+   변수명.value_counts('열이름')
+   ==> 해당 열의 그룹 별 데이터 개수 카운트하여 반환
+   e.g. grouped_filter.value_counts('class')
+
+=============================================================
+
+<< 함수 매핑 >>
+커스텀 함수(custom function)를 DataFrame에 적용하려면 map함수, apply함수, applymap함수를 사용
+  - map 함수 : Series의 각 요소에 함수를 적용
+  - apply 함수 : Series 또는 DataFrame의 행이나 열에 함수를 적용
+  - applymap 함수 : DataFrame의 각 요소에 함수를 적용
+
+1. map 함수 :
+- 시리즈 더하기
+e.g. s=pd.Series([1,2,3,4,5])
+     s_mapped=s.map(lambda x:x+2)
+
+
+2. apply 함수 :
+데이터프레임의 행/열 단위로 적용됨
+
+- 각 열에 대한 최대값 구하기
+e.g. df_applied_col=df.apply(lambda x:x.max(), axis=0)
+     ==> 각각의 열에 대한 최대값을 봐야하니 axis=0인 행 방향으로 봐야함 (열을 기준으로 행을 살펴봄)
+
+- 각 행에 대한 합계 구하기
+e.g. df_applied_row = df.apply(lambda x:x.sum(),axis=1)
+
+
+3. applymap 함수 : 
+데이터프레임 전체에 일괄 적용됨
+
+- 각 요소에 2를 더하기
+e.g. df=pd.DataFrame({
+    'A': [1,2,3],
+    'B': [4,5,6],
+    'C': [7,8,9]
+      })
+    df_applymapped=df.applymap(lambda x:x+2)
+    ==> 각 요소에 현재 값에서 2를 일괄적으로 더해줌
+
 
 
 =============================================================
