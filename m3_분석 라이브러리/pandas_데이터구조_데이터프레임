@@ -424,7 +424,16 @@ loc (Label Location)
       e.g. df1.rdiv(1)
            ==> 값은 다음과 같이 계산되어 나옴: 1/요소
 
+-----
+누적 합 구하기:
+.cumsum() 
 
+.expanding().sum()
+e.g. cum_sum=s.expanding().sum()
+
+누적 평균 구하기:
+.expanding().mean()
+e.g. cum_mean=s.expanding().mean()
 
 =============================================================
 
@@ -449,9 +458,29 @@ loc (Label Location)
       e.g. g=df3['Score'].groupby(df3['Name']).mean()
 
 
+=============================================================
 
+<< transform 함수 >>
+- 원소의 본래 행 인덱스와 열 이름을 기준으로 연산 결과를 반환
 
+기본 형태:
+  그룹객체명.transform(매핑함수)
+  ==> 내장 함수 사용 시 .transform('내장함수') 와 같이 '' 표기로 넣어줘야 함 
 
+- 그룹별 평균 구하기:
+  e.g. df1['mean_by_category']=df1.groupby('Category')['Value'].transform('mean')
+
+- 그룹별 누적합 구하기 :
+  e.g. df['Cumulative_Sum']=df.groupby('Category')['Value'].cumsum()
+       ==> df 데이터프레임에 'Cumulative_Sum' 열을 추가하는데,
+           추가한 열에는 각 'category'별로 'value'에 들어가 있는 값이 누적합이 되어 들어가야함
+
+- 그룹별 누적 평균 구하기 :
+  e.g. df['cum_mean']=df.groupby('Category')['Value'].transform(lambda x:x.expanding().mean())
+       ==> df 데이터프레임에 'cum_mean' 열을 추가하는데,
+           'Category'를 그룹을 묶고, 
+           묶인 그룹별로 'Value'열의 값에 대해 transform 함수대로 적용을 시키는데,
+           transform 함수에 있는 내용은, 각 행별로 누적 평균을 구해서 적용시키는 것.
 
 =============================================================
 
@@ -494,6 +523,23 @@ loc (Label Location)
 6. 각 그룹에 대한 특정 열의 표준편차를 집계하여 시리즈로 반환
     변수명=그룹객체명.열이름.std()
     e.g. std_fare=grouped.fare.std()
+
+7. 그룹별로 누적 합 구하기
+    데이터프레임.groupby('열이름')['더하기 할 열이름'].cumsum()
+    e.g. df['Cumulative_Sum']=df.groupby('Category')['Value'].cumsum()
+
+8. 최빈값 구하기
+    - 그룹별 최빈값만 간단히 보고 싶다면:
+      데이터프레임.groupby(by=['기준 열이름'][['최빈값 찾을 열이름']].agg(pd.Series.mode)
+      e.g. df1 = df.groupby(by=['Category'])[['Value']].agg(pd.Series.mode)
+
+    - 그룹의 각 요소와 함께 최빈값을 열추가하여 보고 싶다면 (기존 포맷 유지):
+      ==> 사용자 함수 만들어서 사용
+      e.g. def most_frequent(x):
+           return x.mode().iloc[0]  
+             ==> 최빈값이 여러 개일 경우 첫번째 값 선택
+           df['Most_Frequent']=df.groupby('Category')['Value'].transform(most_frequent)
+             ==> 'Category' 열을 기준으로 그룹화하고, 'Value' 열에 대해 가장 자주 등장하는 값 찾기
 
 
 - agg() 메서드 사용 
@@ -542,10 +588,14 @@ loc (Label Location)
 - 시리즈 더하기
 e.g. s=pd.Series([1,2,3,4,5])
      s_mapped=s.map(lambda x:x+2)
+- 특정 열의 포맷 수정 :
+e.g. format=lambda x:'%.2f' %x
+     frame['e'].map(format)
 
 
 2. apply 함수 :
 데이터프레임의 행/열 단위로 적용됨
+
 
 - 각 열에 대한 최대값 구하기
 e.g. df_applied_col=df.apply(lambda x:x.max(), axis=0)
@@ -554,9 +604,17 @@ e.g. df_applied_col=df.apply(lambda x:x.max(), axis=0)
 - 각 행에 대한 합계 구하기
 e.g. df_applied_row = df.apply(lambda x:x.sum(),axis=1)
 
+- 시리즈의 최대, 최소값 차이 계산
+e.g. f=lambda x:x.max()-x.min()
+     frame.apply(f)
+     ** 각 행에 대해 한번씩 수행하고 싶다면 axis='columns' 추가해주면 됨
+         e.g. frame.apply(f,axis='columns')
+
+
 
 3. applymap 함수 : 
 데이터프레임 전체에 일괄 적용됨
+시리즈에는 사용 못함 
 
 - 각 요소에 2를 더하기
 e.g. df=pd.DataFrame({
