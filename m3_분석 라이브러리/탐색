@@ -101,10 +101,20 @@ e.g. cond1=df.a>10
        ==> 데이터프레임 df1의 a열에서 10보다 큰 값이 있는 경우, 
            데이터프레임 df1에서 해당 인덱스를 drop 시킴
 
+- 중복값 제거
+  데이터프레임.drop_duplicates()
+  e.g result=customer_info[['name','total_amount']].drop_duplicates().reset_index(drop=True)
+      ==> 동일 고객에 대한 정보가 중복되어 drop_duplicates로 중복 데이터 삭제 
+
 
 ---- 열이름 바꾸기 ----
   데이터프레임.rename(columns={'기존이름':'새이름',...}, inplace=True)
   e.g. tdf.rename(columns={'sex':'gender','fare':'ticket'}, inplace=True)
+
+- 열 순서 변경
+  변수명=['열이름 순서대로 입력']
+  데이터프레임[변수명]
+  e.g. columns_customed=['pclass','sex','age','survived']
 
 
 
@@ -123,7 +133,7 @@ e.g. cond1=df.a>10
 ---- 값 바꾸기 ----
 
 - 원본에 반영하고 싶다면:
-  데이터프레임.열이름.replace({'기존값':'수정값',...}, inplace=True
+  데이터프레임.열이름.replace({'기존값':'수정값',...}, inplace=True)
   e.g. df.sex.replace({'female':'1,'male':0},inplace=True)
 
 - 임시로 값 바꿔서 쓰고 싶다면:
@@ -131,9 +141,71 @@ e.g. cond1=df.a>10
   e.g. df1=tdf[['gender']].replace(['female','male'],[1,0])
 
 
+---- 특정 컬럼의 고유 구성 요소 관련 
 
+- 특정 컬럼의 고유 구성 요소 확인 
+  데이터프레임.열이름.unique()
+  e.g. tdf.age.unique()
 
+- 특정 컬럼의 구성 요소 개수 확인
+  len(데이터프레임.열이름.unique())
+  e.g. len(tdf.age.unique())
+
+- 특정 컬럼의 값 구성 확인
+  변수명=데이터프레임.열이름.value_counts()
+  변수명.sort_index() # <== 소팅을 위해서 넣음
+  e.g. age_counts_sorted=tdf.age.value_counts()
+       age_counts_sorted.sort_index()
 
 
 =============================================================
+
+<< 범주형 데이터 --> 수처형 데이터로 변환 >>
+- Label Encoding: 각 범주형 값을 고유한 정수로 변환. 
+                  이 방법은 범주형 변수에 순서나 순위가 있을 때 유용
+- One-Hot Encoding: 각 범주형 값을 이진 벡터로 변환. 
+                    이 방법은 범주형 변수에 순서나 순위가 없을 때 유용
+
+
+----- [ Label Encoding ] -----
+from sklearn.preprocessing import LabelEncoder
+변수명=LabelEncoder()
+레이블인코딩 적용할 columns 리스팅
+for i in 
+
+e.g. 
+from sklearn.preprocessing import LabelEncoder
+
+le=LabelEncoder()
+features=['gender','age']
+for feature in features:
+    tdf[feature]=le.fit_transform(tdf[feature]) # tdf의 'gender'와 'age' 각각에 레이블인코딩하라는 뜻 
+tdf.head()
+
+
+
+----- [ One Hot Encoding ] -----
+
+# one hot encoding (get_dummies 함수를 사용해서 같은 방식으로 적용)
+import pandas as pd
+pd.get_dummies(tdf2).head() 
+# tdf2의 gender는 0,1로 되어 있으니 가만히 두고, 
+# 'class'는 각 등급에 대해 column이 생기고, 맞는 곳에 True, 아닌 곳은 False 가 뜸
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
