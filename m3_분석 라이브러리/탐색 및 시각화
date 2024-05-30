@@ -1,0 +1,139 @@
+<< 결합 탐색 >>
+데이터프레임 결합 방식은 다양함
+- concat, merge, join 사용 가능
+
+----- [ concat() ] ----- 
+
+기본 형태:
+  pd.concat([데이터프레임1, 데이터프레임2], axis=)
+
+- 행 방향으로 결합:
+  e.g. con1=pd.concat([df1,df2],axis=0)
+  ==> 행방향으로 합쳤기 때문에 df1, df2의 같은 column 명에 들어 있는 데이터는 df1 제시, df2꺼가 그 하단에 제시됨
+  ==> 없는 경우 NaN으로 나옴
+
+  e.g. con1=pd.concat([df1,df2],axis=0, ignore_index=True)
+  ==> ignore_index=True를 하면 인덱스 번호를 재정리해줌
+
+- 열 방향으로 결합:
+  e.g. con2=pd.concat([df1,df2],axis=1)
+  ==> 열 방향으로 합쳐서 중복되는 열이름 무시하고 df1 우측으로 df2가 붙음 
+  ==> 없는 데이터는 NaN 처리됨
+
+
+----- [ merge() ] ----- 
+- merge() 함수는 sql의 join 명령과 비슷한 방식으로 어떤 기준에 의해 두 데이터프레임을 병합한는 개념
+- 기준이 되는 열이나 인덱스를 키라고 부름
+- 키가 되는 열이나 인덱스는 반드시 양쪽 데이터프레임에 모두 존재함
+
+
+기본 형태:
+  pd.merge(데이터프레임1, 데이터프레임2, on='결합 기준열')
+  ==> 결합 기준열: 양쪽 데이터프레임에 모두 존재하는 열...? 
+
+
+- default(inner)
+  e.g. pd.merge(df1, df2, on='ind')
+
+
+- outer
+  e.g. pd.merge(df1, df2, on='ind',how='outer')
+
+
+
+
+----- [ join() ] ----- 
+
+- 인덱스를 기준으로 결합
+- default는 교집합 
+- 양쪽에 겹치는 부분이 있다면 lsuffix, risuffix로 구분 줘서 테이블 결합
+- 판다스 join() 메소드는 merge() 함수를 기반으로 만들어졌기 때문에 기본 작동 방식이 서로 비슷
+- join() 메소드는 두 데이터프레임의 행 인덱스를 기준으로 결합하는 점에서 merge와 차이가 있으나
+  on=keys 옵션 설정하면 열을 기준으로 결합
+
+기본 형태:
+  데이터프레임1.join(데이터프레임2, lsuffix='표현 지정', rsuffix='표현 지정', how='결합 방식')
+  ==> how=left : 첫번째 데이터프레임 기준으로 정리
+      how=right : 두번째 데이터프레임 기준으로 정리
+      how=inner : 두 데이터프레임의 교집합만 (양쪽 다 있어야 리스팅)
+      how=outer : 두 데이터프레임의 합집합 (어느쪽이든 있기만하면 리스팅)
+
+- default(inner)
+  e.g. df1.join(df2,lsuffix='_1',rsuffix='_2', how='inner')
+
+- outer
+  e.g. df1.join(df2,lsuffix='_1',rsuffix='_2', how='outer')
+
+
+---- 기존 데이터프레임에서 특정 조건으로 결합 ----
+- 특정 조건으로 결합
+변수명1=컨디션 1
+변수명2=컨디션 2
+변수명3=컨디션 3
+데이터프레임[변수명1 & 변수명2 & 변수명3]
+e.g. cond1=df.a>10
+     cond2=df.b==16
+     cond3=df.e>15
+     df[cond1 & cond2 & cond3 ]
+** 결합 조건 ( &, | )
+
+- 특정 조건의 특정 열만 결합하고 싶다면:
+  데이터프레임[조건][['열이름','열이름]]
+  e.g. df[cond1][['a','b']]
+
+
+
+---- 삭제 ----
+
+- 특정 열 삭제 
+  데이터프레임.drop('삭제열이름', axis= )
+  e.g. df1=df1.drop('ind',axis=1)
+
+- 특정 인덱스 삭제 
+  데이터프레임.drop(데이터프레임.index[삭제할 인덱스 번호])
+  e.g. df1.drop(df1.index[0])
+
+- 특정 조건을 가진 행/인덱스 삭제
+  변수명=데이터프레임[데이터프레임.열이름 조건].index
+  데이터프레임.drop(변수명)
+  e.g. idx=df1[df1.a>10].index
+       df1.drop(idx)
+       ==> 데이터프레임 df1의 a열에서 10보다 큰 값이 있는 경우, 
+           데이터프레임 df1에서 해당 인덱스를 drop 시킴
+
+
+---- 열이름 바꾸기 ----
+  데이터프레임.rename(columns={'기존이름':'새이름',...}, inplace=True)
+  e.g. tdf.rename(columns={'sex':'gender','fare':'ticket'}, inplace=True)
+
+
+
+---- 열이름 대/소문자 변경 ----
+
+- 대문자:
+  데이터프레임.rename(str.upper, axis='columns', inplace=True)
+  e.g. tdf.rename(str.upper, axis='columns', inplace=True)
+
+- 소문자:
+  데이터프레임.rename(str.lower, axis='columns', inplace=True)
+  e.g. tdf.rename(str.lower, axis='columns', inplace=True)
+
+
+
+---- 값 바꾸기 ----
+
+- 원본에 반영하고 싶다면:
+  데이터프레임.열이름.replace({'기존값':'수정값',...}, inplace=True
+  e.g. df.sex.replace({'female':'1,'male':0},inplace=True)
+
+- 임시로 값 바꿔서 쓰고 싶다면:
+  데이터프레임[['열이름']].replace(['기존값','기존값'],[수정값, 수정값])
+  e.g. df1=tdf[['gender']].replace(['female','male'],[1,0])
+
+
+
+
+
+
+=============================================================
+
