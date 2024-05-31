@@ -447,6 +447,10 @@ e.g. cum_mean=s.expanding().mean()
                 df2[column].fillna(df2[column].mean(),inplace=True) 
                 ==> null이 있는 곳에 각 column의 mean값 대체, 원본에 반영
 
+    변수명=데이터프레임.groupby('열이름')['열이름'].mean().sort_values()
+    ==> 특정 열이름 기준으로 특정 열이름에 대한 value의 평균 값 구하고 value 기준으로 소팅
+
+
 - 특정 행만 제외하고 각 열의 평균 값 구하기
       e.g. df2=df1.copy()
            for column in df2.select_dtypes(include=[np.number]).columns:
