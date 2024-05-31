@@ -1,4 +1,5 @@
 << 시각화 >>
+
 Pandas는 주로 Matplotlib 라이브러리를 기반으로 하여 시각화를 구현하며, 
 간단한 코드로 다양한 그래프를 생성
 
@@ -18,11 +19,135 @@ plot.kde(): 커널 밀도 추정 그래프를 생성.
 
 =============================================================
 
+<< 그래프 생성 기본 포맷 >>
+
+데이터프레임.plot(kind='그래프종류',color=['색상','색상'])
+plt.title('테이블이름')
+plt.xlabel('변수')
+plt.ylabel('변수')
+plt.xticks(rotation= ) # <== rotation 뒤에 원하는 각도 넣기. (e.g. 가로=0, 45도=45)
+plt.legend()
+plt.show()
+
+
+
+
+
+=============================================================
+
 << line graph >>
+
+데이터프레임.plot()
+plt.title('그래프이름')
+plt.show()
 
 
 << bar graph >>
 
+데이터프레임.plot.bar()
+plt.title('그래프이름')
+plt.show()
+
 
 <<< histogram >>
 
+데이터프레임.plot.hist(alpha=00,bins=00, color='색상')
+plt.title('그래프이름')
+plt.show()
+==> alpha== 투명도. 숫자가 높을 수록 색이 진해짐. 
+==> bins== 구간. 숫자가 높을수록 더 촘촘해짐
+==> color== 그래프 색상
+
+<< box plot >>
+
+데이터프레임.plot.box()
+plt.title('그래프이름')
+plt.show()
+
+
+<< scatter plot >>
+
+데이터프레임.plot.scatter(x='열이름',y='열이름')
+plt.title('그래프이름')
+plt.show()
+
+e.g. df=pd.DataFrame(np.random.rand(50,4), columns=['A','B','C','D'])
+    # 양의 상관관계
+    df['C']=df['A']*2+np.random.rand(50)*0.5
+    
+    # 음의 상관관계
+    df['D']=-df['A']*2+np.random.rand(50)*0.5
+    
+    fig, axs=plt.subplots(1,2,figsize=(14,6))
+    
+    axs[0].scatter(df['A'],df['C'], color='blue')
+    axs[0].set_title('Positive Correlation')
+    axs[0].set_xlabel('A')
+    axs[0].set_ylabel('C')
+    
+    axs[1].scatter(df['A'],df['D'], color='red')
+    axs[1].set_title('Negative Correlation')
+    axs[1].set_xlabel('A')
+    axs[1].set_ylabel('D')
+    
+    plt.suptitle('Scatter Plots of Positive and Negative Correlation')
+    plt.show()
+
+
+<< KDE (커널 밀도 추정) >>
+
+- 데이터의 분포를 부드럽게 나타내는 그래프
+
+e.g.  import pandas as pd
+      import numpy as np
+      import matplotlib.pyplot as plt
+      
+      # 데이터 생성
+      data=pd.DataFrame({
+          'A': np.random.randn(1000),
+          'B': np.random.randn(1000)+1
+      })
+      
+      # KDE 그래프
+      data['A'].plot.kde(label='A')
+      data['B'].plot.kde(label='B')
+      plt.title('Kernel Density Estimate(KDE) Plot')
+      plt.xlabel('Value')
+      plt.ylabel('Density')
+      plt.legend()
+      plt.show()
+
+
+<< 다른 그래프와 KDE 함께 그리기 >>
+
+
+e.g.  import pandas as pd
+      import numpy as np
+      import matplotlib.pyplot as plt
+      
+      # 데이터 생성
+      data=pd.Series(np.random.randn(1000))
+      
+      # 히스토그램과 KDE 같이 그리기
+      ax=data.plot.hist(bins=30, alpha=0.5, density=True, label='Histogram') # 히스토그램
+      data.plot.kde(ax=ax, label='KDE') # KDE 그래프
+      plt.title('Histogram and KDE Plot')
+      plt.xlabel('Value')
+      plt.ylabel('Density')
+      plt.legend()
+      plt.show()
+
+=============================================================
+
+<< Seaborn 사용하여 시각화 >>
+
+import seaborn as sns
+import matplotlib.pyplot as plt
+
+e.g. titanic3파일에서 성별과 승객 (생존, 사망) 수 관계 시각화
+      sns.countplot(x='sex', hue='survived', data=df)
+      plt.title('Survival count by Sex')
+      plt.xlabel('Sex')
+      plt.ylabel('Count')
+      plt.legend(title='Survived')
+      plt.show()
