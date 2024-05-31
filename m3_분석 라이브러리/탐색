@@ -107,6 +107,11 @@ e.g. cond1=df.a>10
       ==> 동일 고객에 대한 정보가 중복되어 drop_duplicates로 중복 데이터 삭제 
 
 
+- 중복값 없이 한번에 그룹별 합계 원할 때:
+  변수명=데이터프레임.groupby('열이름')['열이름'].sum().reset_index()
+  e.g. total_spent=merged_df.groupby('name')['amount'].sum().reset_index()
+
+
 ---- 열이름 바꾸기 ----
   데이터프레임.rename(columns={'기존이름':'새이름',...}, inplace=True)
   e.g. tdf.rename(columns={'sex':'gender','fare':'ticket'}, inplace=True)
@@ -134,7 +139,7 @@ e.g. cond1=df.a>10
 
 - 원본에 반영하고 싶다면:
   데이터프레임.열이름.replace({'기존값':'수정값',...}, inplace=True)
-  e.g. df.sex.replace({'female':'1,'male':0},inplace=True)
+  e.g. df.sex.replace({'female':1,'male':0},inplace=True)
 
 - 임시로 값 바꿔서 쓰고 싶다면:
   데이터프레임[['열이름']].replace(['기존값','기존값'],[수정값, 수정값])
@@ -192,9 +197,26 @@ pd.get_dummies(tdf2).head()
 # tdf2의 gender는 0,1로 되어 있으니 가만히 두고, 
 # 'class'는 각 등급에 대해 column이 생기고, 맞는 곳에 True, 아닌 곳은 False 가 뜸
 
+=============================================================
+
+<< 블린 인덱싱 >>
+
+e.g. sns.histplot(df[df['survived']==1]['age'],bins=30,kde=False,color='blue',label='Survived')
+     df[df['survived']==1] : 블린 인덱싱. survived==1인것만 뽑기
+     df[df['survived']==1]['age'] : survived==1인것만 뽑은 것에서 ['age']
 
 
 
+=============================================================
+
+<< 코랩에 파일 불러오기 >>
+
+- 마운팅 없이 로컬에서 파일 불러오기:
+  from google.colab import files
+  변수명=files.upload()
+
+
+- 마운팅으로 파일 불러오기:
 
 
 
