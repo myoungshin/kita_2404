@@ -1,0 +1,79 @@
+
+파이썬은 datetime,
+판다스는 timestamp,
+넘파이는 datetime64 
+
+=====================================================================
+
+<< 날짜 함수 타입 변환 >>
+
+- 문자열 형식의 날짜를 datetime 형식으로 변환 :
+  pd.to_datetime('날짜')
+  e.g. pd.to_datetime('2020-01-01')
+
+  pd.to_datetime(날짜변수명)  
+  pd.to_datetime(date_str)
+
+- 날짜 datetime 형식을 문자열 형식으로 변환 :
+  date.strftime('%Y-%m-%d')
+  e.g. date_only_list=[date.strftime('%Y-%m-%d') for date in date_objects]
+
+
+
+=====================================================================
+
+<< 특정 날짜 선택/추출 >>
+
+- 일정한 간격으로 날짜 범위 생성 :
+  pd.date_range(start='날짜', end='날짜')
+  e.g. date_range=pd.date_range(start='2022-01-01', end='2022-01-10')
+  ** pd.date_range 함수는 pandas에서 제공하지만 내부적으로 numpy의 날짜/시간 타입인 datetime64를 사용
+
+- 특정 날짜의 데이터 선택 :
+  데이터프레임.loc['날짜']
+  e.g. df.loc['2022-01-02']
+
+- 특정 날짜 범위 슬라이싱 :
+  데이터프레임['시작 날짜':'끝 날짜']
+  e.g. df['2022-01-01':'2022-01-02']
+
+- 주어진 주기에 따라 데이터 리셈플링 :
+  pd.date_range(start='날짜', periods=숫자, freq='빈도기준') 
+  ** periods : 몇 개를 생성할건지
+  ** freq : D (1일 단위), 2D (2일 단위)
+  e.g. date_range=pd.date_range(start='2021-01-01', periods=10, freq='D')
+
+
+=====================================================================
+
+<< datetime 속성 추출하여 새로운 열에 추가 (e.g. 연도/월/일/요일) >>
+
+- 참고할 데이터가 인덱스인 경우:
+  데이터프레임['year']=데이터프레임.index.year
+    e.g. df['열이름']=df.index.year
+  데이터프레임['month']=데이터프레임.index.month
+    e.g. df['month']=df.index.month
+  데이터프레임['day']=데이터프레임.index.day
+    e.g. df['day']=df.index.day
+  데이터프레임['day_of_week']=데이터프레임.index.day_of_week
+  ** day_of_week는 0-6으로 요일을 표현함. 0=월요일, 6=일요일
+    e.g. df['day_of_week']=df.index.dayofweek
+
+- 참고할 데이터가 기본 열에 있다면: 
+  데이터프레임['연도 열이름']=데이터프레임['참고할 열이름'].dt.year
+    e.g. df['year']=df['date'].dt.year
+  데이터프레임['월 열이름']=데이터프레임['참고할 열이름'].dt.month
+    e.g. df['month']=df['date'].dt.month
+  데이터프레임['일 열이름']=데이터프레임['참고할 열이름'].dt.day
+    e.g. df['day']=df['date'].dt.day
+  데이터프레임['요일 열이름']=데이터프레임['참고할 열이름'].dt.dayofweek
+    e.g. df['day_of_week']=df['date'].dt.dayofweek
+
+
+
+
+
+
+
+
+
