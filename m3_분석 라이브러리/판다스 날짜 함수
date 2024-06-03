@@ -18,7 +18,18 @@
   date.strftime('%Y-%m-%d')
   e.g. date_only_list=[date.strftime('%Y-%m-%d') for date in date_objects]
 
+- 날짜 데이터를 분기로 변환
+  데이터프레임.dt.to_peirod('Q') # <== Q : quarter 
+  e.g. quarter_data=date_series.dt.to_period('Q')
 
+
+- 문자열을 period로 변환
+  변수명.astype('period[M]') # <== M : month
+  e.g. period_data=period_data.astype('period[M]')
+
+- peirod를 timestamp로 변환
+  변수명.apply(lambda x:x.to_timestamp())
+  e.g. timestamp_data=period_data.apply(lambda x:x.to_timestamp())
 
 =====================================================================
 
@@ -70,6 +81,7 @@
     e.g. df['day_of_week']=df['date'].dt.dayofweek
 
 
+=====================================================================
 
 
 
