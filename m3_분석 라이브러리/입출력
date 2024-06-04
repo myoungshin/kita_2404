@@ -1,0 +1,29 @@
+<< csv >>
+
+- 데이터프레임을 csv 파일로 저장:
+  데이터프레임.to_csv('파일명.csv')
+  e.g. df.to_csv('test.csv') 
+
+- csv 파일 불러오기: 
+  데이터프레임 이름=pd.read_csv('파일명.csv', index_col=인덱스로 만들 열 번호)
+  ** index_col=0 으로 지정 시 그냥 일반적인 인덱스 컬럼이 나옴
+  ** index_col=0 없이 불러낼 경우 "unnamed" 열이 추가되어 나옴 
+  e.g. df=pd.read_csv('test.csv',index_col=0)
+
+
+    
+    << json >>
+- 데이터프레임을 json 파일로 저장:
+  데이터프레임.to_json('파일명.json')
+
+
+- json 파일 불러오기:
+  데이터프레임.read_json('파일명.json')
+
+
+    << pickle >>
+- 데이터프레임을 pickle 파일로 저장:
+  데이터프레임.to_pickle('파일명.pkl')
+
+- pickle 파일 불러오기
+  데이터프레임.read_pickle('파일명.pkl')
