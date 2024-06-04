@@ -83,9 +83,59 @@
 
 =====================================================================
 
+- 특정 구간 전/후의 내용들 잘라내기 
+  데이터프레임.truncate(before="조건", after="조건")
+  e.g. print(ts.truncate(before='2011-01-05',after='2011-01-10'))
+  ==> 2011-01-05 이전과 2011-01-10 이후의 데이트는 잘라냄.
 
 
+=====================================================================
 
+<< 날짜 계산 >>
+
+- datetime의 더하기, 빼기 수행
+  timedelta(기간=기간) : datetime 객체의 더하기, 빼기를 수행
+  e.g. now=datetime.now()
+       in_two_weeks=now+timedelta(weeks=2)
+       pd.date_range(datetime.now(), in_two_weeks)
+
+- 특정 시점부터 특정 요일을 뽑을 때:
+  pd.date_range('시작 날짜', periods=개수, freq='W-요일')
+  e.g. dates=pd.date_range('11/30/2023',periods=10,freq='W-WED') 
+  ==> 2023/11/30부터 수요일인 날짜들을 10개 뽑기
+
+- 특정 날짜 범위 내에서 특정 시간 단위로 생성:
+  pd.date_range('시작 날짜', '끝나는 날짜', freq='숫자h')
+  e.g. pd.date_range('2000-01-01','2000-01-03 23:59', freq='4h')
+  ==> 시작날짜에서 끝나는 날짜까지 4시간 단위로 
+
+
+- 특정 기간으로 데이터프레임 생성:
+  e.g. period_range=pd.period_range(start='2020Q1', end='2025Q4',freq='q')
+       df=pd.DataFrame({
+           'quarter':period_range,
+           'start_date':period_range.start_time.date,
+           'end_date':period_range.end_time.date
+       })
+
+
+=====================================================================
+
+freq 매개변수에 사용되는 Frequncy strings
+- A calendar year end frequency
+- B   business day frequency
+- C   custom business day frequency
+- D   calendar day frequency
+- W   weekly frequency
+- M   month end frequency
+- SM   semi-month end frequency (15th and end of month)
+- BM   business month end frequency
+- CBM   custom business month end frequency
+- MS   month start frequency
+- SMS   semi-month start frequency (1st and 15th)
+- BMS   business month start frequency
+- CBMS   custom business month start frequency
+- Q   quarter end frequency
 
 
 
