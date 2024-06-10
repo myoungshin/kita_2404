@@ -140,6 +140,146 @@ e.g. resized=np.resize(a,(3,2))
   e.g. li=array3d.tolist()
 
 
+============================================================
+
+<< 배열 인덱싱 >>
+
+- 기본 형식:
+  배열명[행][열]
+
+- zero가 아닌 인덱스를 배열 형태로 출력:
+  (A) np.where(배열명!=0)
+      e.g. print(np.where(arr4!=0))
+
+  (B) np.nonzero(배열명)
+      e.g. print(np.nonzero(arr4))
+
+
+<< 배열 슬라이싱 >>
+
+  배열명[ : 숫자, 숫자 : ]
+  ==> 행= ~ 숫자 행 직전까지,
+      열= 숫자부터 시작해서 끝까지에 해당되는 
+      e.g. array2d[:2,1:]
+      e.g. array2d[:2,0]
+        ==> 끝에 0만 저렇게 붙일 경우 형태가 특이하게 바뀜. 왜 그런지 이유 찾아봐야함
+
+
+
+<< 블린 인덱싱 >>
+
+- 조건에 해당되는 요소만 추출 :
+  배열명1=배열명2(배열명2에서 요소의 추출할 조건)
+  e.g. array3=array1d[array1d>5]
+       ==> array1d에서 5 이상에 해당되는 요소들만 추출하여 배열 형태로 반환
+
+- 배열명+조건 :
+  e.g. print(array1d>5)
+       ==> array1d의 각 요소를 array1d>5 조건에 대한 True, False로 결과 변환
+
+
+<< 배열 정렬 >>
+
+내림차순 정렬:
+  (A) 
+  np.sort(배열명)[::-1]
+  arr3_1=np.sort(arr3)[::-1]
+
+
+
+# 행렬이 2차원 이상일 경우 axis 축 값 설정을 통해 로우 방향, 칼럼 방향으로 정렬 수행
+array2d=np.array([[8,12],[7,1]])
+print(array2d,'\n')
+
+sort_array2d_axis0=np.sort(array2d,axis=0) # 행방향 올림차순 (세로로 재정렬)
+print(sort_array2d_axis0,'\n')
+
+sort_array2d_axis1=np.sort(array2d,axis=1) # 열방향 올림차순 (가로로 재정렬)
+print(sort_array2d_axis1,'\n')
+
+
+ 
+  (B) 
+  배열명[::-1]
+  e.g. arr[::-1]
+
+
+<< 배열 전치 >>
+transpose, swapaxes 사용 가능
+- transpose 는 다차원 배열에서 축의 순서를 재배열하여 배열의 모양을 변경
+- swapaxes는 두 축만을 대상으로 서로 위치를 교환
+
+- 행과 열을 바꿔줌 
+  배열명.T
+  e.g. arr.T
+
+- 축 순서 재배열 
+  np.transpose(배열명,(축 순서)) # 순서는 가장 높은 차원부터 차례대로임 (e.g. (3차원,2차원,1차원))
+  e.g. np.transpose(arr, (1, 0, 2))
+
+- 축 교환 
+  np.swapaxes(배열명,축 넘버, 축 넘버) 
+    ==> 0번 축 : 행, 1번 축: 열
+    e.g. y=np.swapaxes(a,0,1)
+
+
+
+============================================================
+
+<< 팬시 인덱싱 >>
+정수 배열을 사용한 인덱싱:
+- 정수로 이루어진 배열을 사용하여 다른 배열의 특정 요소를 선택
+  e.g. arr=np.array([10,20,30,40,50])
+       index_arr=np.array([0,2,4]) # 추출할 인덱스의 리스트 
+       result=arr[index_arr]
+       print(result)
+
+
+
+부울 마스크를 사용한 인덱싱:
+- 부울 배열(마스크)을 생성하여, 마스크가 True인 위치의 요소를 선택
+  e.g. arr=np.array([10,20,30,40,50])
+       mask=arr>25
+       result=arr[mask]
+       print(result)
+
+
+
+정수 배열과 부울 마스크의 결합:
+- 이 방법들을 결합하여 더욱 강력한 선택과 수정을 할 수 있다.
+  e.g. arr=np.array([10,20,30,40,50])
+       index_arr=np.array([0,2,4])
+       mask=arr[index_arr]>20
+       result=arr[index_arr][mask] 
+       print(result)
+       ==> index_arr 에 만족하는 것 중에서 mask에 만족하는 요소를 추출
+       
+각 배열의 행에 특정 값 지정: 
+- for문으로 각 회차만큼 행 값 지정하는 방법
+  arr=np.empty((8,4)) # empty : 형태 잡기 위해 아무거나 막 들어감
+  for i in range(8): # 각 행별로 i가 들어가게 됨
+      arr[i]=i # arr[i] : 배열의 행에 i 값을 넣으라는 말 
+  print(arr)
+
+- 특정 인덱스로 요소 추출
+  배열명[[추출할 인덱스 리스팅]]
+  e.g. arr=np.empty((8,4)) 
+       print(arr[[4,3,0,6]])
+       ==> 4행 4열로 나옴
+
+- 특정 인덱스로 요소 추출 & 열 순서 바꿔서 결과 반환
+    배열명[[추출할 인덱스 리스팅]][:,[열 인덱스]]
+    e.g. print(arr[[1,5,7,2]][:,[0,3,1,2]])
+         ==> original array:
+              [[ 4  5  6  7]
+               [20 21 22 23]
+               [28 29 30 31]
+               [ 8  9 10 11]] 
+        ==> 결과 array:
+              [[ 4  7  5  6]
+               [20 23 21 22]
+               [28 31 29 30]
+               [ 8 11  9 10]]
 
 ============================================================
 
@@ -203,6 +343,79 @@ e.g. resized=np.resize(a,(3,2))
   np.exp(변수명) # 배열로 바로 집어 넣을 수도 있은 듯
     e.g. np.exp([1,2,3])
 
+- 나머지를 구할 때 :
+  (A) np.mod(배열1, 배열2)
+      e.g. print(np.mod(value,value1))
+
+  (B) np.remainder(배열1,배열2)
+      e.g. print(np.remainder(value,value1))
+
+- 역 수 (reciprocal)
+  np.reciprocal(값)
+  e.g. value=np.array([0.85,1.85,1,100])
+       print(np.reciprocal(value))
+       ==> 결과 값: [1.17647059 0.54054054 1.         0.01      ]
+
+- 승수 (power)
+  np.power(값,값)
+  e.g. value=np.array([2,10,15])
+       value1=np.array([1,2,3])
+       print(np.power(value,2),'\n')
+       print(np.power(value, value1))
+       ==> 결과 값: [  4 100 225] 
+
+                    [   2  100 3375]
+
+
+============================================================
+
+- any 메서드 : 하나 이상의 값이 True 인지 검사
+  배열명.any()
+  e.g. bools=np.array([False,False, True, True])
+       bools.any()
+       ==> 결과 값: True
+
+
+- all 메서드 : 모든 원소가 True인지 검사
+  배열명.all()
+  e.g. bools=np.array([False,False, True, True])
+       bools.all()
+       ==> 결과 값: False
+
+
+- 조건에 대한 만족, 불만족 시 요소 결과 변경 방법 :
+  np.where(조건, 조건 만족 시 결과, 조건 불만족 시 결과)
+  e.g. arr=np.random.randn(4,4)
+       np.where(arr>0,1,-1) 
+       ==> arr 배열: 
+            [[ 1.49407907 -0.20515826  0.3130677  -0.85409574]
+             [-2.55298982  0.6536186   0.8644362  -0.74216502]
+             [ 2.26975462 -1.45436567  0.04575852 -0.18718385]
+             [ 1.53277921  1.46935877  0.15494743  0.37816252]] 
+
+       ==> 결과 값: 
+            [[-1 -1 -1  1]
+             [ 1  1 -1 -1]
+             [-1 -1 -1  1]
+             [-1 -1 -1  1]]
+
+    ** 만족/ 불만족 둘 중 하나에 대해서만 결과 값 바꿀 경우:
+       해당 칸에 배열 값 그대로 넣어주면 됨
+       e.g print(np.where(arr>0,2,arr))
+           ==> 요소가 양수일 경우 2로, 음수일 경우 현재 상태 그대로 출력
+
+
+
+
+============================================================
+
+<< view (뷰) >>
+
+
+
+
+
+
 
 
 
@@ -257,9 +470,6 @@ e.g. resized=np.resize(a,(3,2))
 - 기존의 데이터에서 sampling
   np.random.choice 
   
-
-
-
 
 
 
