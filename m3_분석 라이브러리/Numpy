@@ -240,6 +240,16 @@ e.g. x=[1,2,3]
        ==> 결과 : [False,  True, False,  True]
 
 
+<< 배열끼리의 비교 >>
+
+- 배열 arr1과 arr2에서, arr2의 요소가 10보다 큰 위치의 arr1 요소들을 선택 :
+e.g. arr1 = np.array([10, 20, 30, 40, 50])
+     arr2 = np.array([5, 15, 25, 10, 35])
+     print([arr2>10])
+    
+     result=arr1[arr2>10]
+     result
+
 
 
 << 배열 전치 >>
