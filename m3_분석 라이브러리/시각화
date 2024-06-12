@@ -137,6 +137,12 @@ e.g.  import pandas as pd
       plt.legend()
       plt.show()
 
+
+<< heatmap >>
+
+
+
+
 =============================================================
 
 << Seaborn 사용하여 시각화 >>
