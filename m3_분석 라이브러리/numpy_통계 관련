@@ -1,0 +1,67 @@
+<<  표준화 >>
+
+- 데이터의 평균을 0, 표준편차를 1로 변환하는 과정. 
+- 이 과정을 통해 데이터의 스케일을 조정하고 비교 가능한 형태로 만듦
+
+- 사용자 함수를 사용하여 z-score 만들기:
+    def z_score(x):
+        return (x-x.mean())/x.std()  
+
+<< 기초 통계 >>
+
+- 평균: 
+    np.mean(변수명)
+
+- 표준편차:
+    np.std(변수명)
+
+- 중간값:
+    ** 평균과 중앙값 사이의 차이는 데이터의 비대칭성을 나타냄
+       ==> 차이가 클수록 분포의 왜곡이 더 크며, 이러한 왜곡을 인지, 적절한 해석과 분석 방법 선택 필요
+           e.g. 이상치, 극단적인 값. 데이터 해석에 영향을 미치므로 고려하여 분석 진행 필요
+    np.median(변수명)
+
+- 사분위수:
+    np.percentile(변수명, 숫자)
+    ==> 1사분위는 25를, 3사분위는 75를 입력
+
+-  상관계수:
+    - numpy 사용 시:
+      변수명=np.corrcoef(x,y) # .상관계수 구해서 상관행렬 형태로 보여줌
+      변수명[0,1] # 상관행렬의 [0,1] 위치의 (x,y) 계수를 보여줌
+
+    - pandas 사용 시:
+      데이터프레임명.corr()
+
+
+<< 확률 >>
+
+e.g. 
+import scipy.stats as stats
+
+mean=0
+std_dev=1
+value=1
+probability=stats.norm.cdf(value, mean, std_dev) 
+print(probability)
+==> 정규분포에서 std_dev가 1보다 아래인 확률 구하기
+
+
+- 이산형 
+
+e.g. 
+# 동전을 10번 던질 대 앞면이 정확히 6번 나올 확률
+from scipy.stats import binom
+
+n=10 # 총 시행 횟수
+k=6 # 성공 횟수
+p=0.5 # 성공 확률
+
+probability=binom.pmf(k,n,p) # (성공 횟수, 시행 횟수, 성공 확률)
+# pmf=probability mass function
+
+probability
+
+
+- 분산 
+
