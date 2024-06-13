@@ -64,6 +64,18 @@ plt.show()
 plt.title('그래프이름')
 plt.show()
 
+혹은 
+
+plt.boxplot(변수명)
+plt.title('그래프이름')
+plt.ylabel('라벨')
+plt.show()
+
+e.g. data=np.array([50,85,90,78,92,88,76,95,89,77,91,130])
+     plt.boxplot(data)
+     plt.title('Box Plot of Data')
+     plt.ylabel('Value')
+     plt.show()
 
 << scatter plot >>
 
@@ -138,10 +150,53 @@ e.g.  import pandas as pd
       plt.show()
 
 
+
+
 << heatmap >>
 
 
+e.g. sns.heatmap(data, annot=True, cmap='coolwarm',xticklabels=['A','B','C'],yticklabels=['A','B','C'])
+     plt.title('Heatmap of Chemical Compounds A, B, C')
+     plt.show()
 
+
+<< 밀도 그래프 >>
+
+sns.kdeplot(변수명, fill=True)
+plt.title('그래프 이름')
+plt.xlabel('x축 라벨')
+plt.ylabel('y축 라벨')
+plt.show()
+
+e.g. sns.kdeplot(house_price, fill=True)
+     plt.title('Density Plot of House Prices')
+     plt.xlabel('Price')
+     plt.ylabel('Density')
+     plt.show()
+
+
+<< 도수 분포표 >>
+
+
+e.g. (unique, counts)=np.unique(score, return_counts=True)
+     frequency_table=np.asarray((unique, counts)).T
+     print(frequency_table)
+
+
+<< 추세선 있는 산점도 >>
+
+
+e.g. x=np.arange(100)
+     x=x
+     y=x+np.random.normal(0,10,len(x)) # len(x) : x의 개수와 동일한만큼 y의 개수 생성
+    
+     plt.scatter(x,y)
+     m,b=np.polyfit(x,y,1)
+     plt.plot(x, m*x+b, color='red')
+     plt.title('Scatter Plot with Trend Line')
+     plt.xlabel('x')
+     plt.ylabel('y')
+     plt.show()
 
 =============================================================
 
