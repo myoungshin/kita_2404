@@ -19,6 +19,27 @@ plot.kde(): 커널 밀도 추정 그래프를 생성.
 
 =============================================================
 
+<< 다양한 스타일의 그래프 아래 코드로 확인하여 사용 가능 >>
+
+- 사용 가능 그래프 확인:
+plt.style.available
+
+
+- 사용 시 코드 작성 예시:
+plt.style.use('ggplot')
+x=df_auto['mpg']
+y=df_auto['weight']
+
+plt.figure(figsize=(8,6))
+plt.scatter(x,y, color='blue')
+plt.grid(True)
+plt.title('Scatter Plot (ggplot)', size=20)
+plt.ylabel('weight')
+plt.xlabel('mpg')
+
+
+=============================================================
+
 << 그래프 생성 기본 포맷 >>
 
 데이터프레임.plot(kind='그래프종류',color=['색상','색상'])
@@ -212,3 +233,41 @@ e.g. titanic3파일에서 성별과 승객 (생존, 사망) 수 관계 시각화
       plt.ylabel('Count')
       plt.legend(title='Survived')
       plt.show()
+
+
+=============================================================
+
+<< Matplotlib 사용하여 시각화 >>
+
+import numpy as np
+import matplotlib.pyplot as plt
+
+e.g. x=np.arange(1,21,2)
+     y=np.array([3,5,6,13,30,21,22,29,33,32])
+     plt.figure(figsize=(5,5))
+     plt.plot(x,y,color='blue',marker='o', markersize=3)
+     plt.title('Lineplot Matplotlib', size=15)
+     plt.xlabel('x', size=12)
+     plt.ylabel('y', size=12)
+     plt.legend(labels=['lineplot'])
+
+
+
+=============================================================
+
+<< 한글 깨짐 방지 >>
+
+# 설치 후 세션 다시 시작
+# Google colab에는 한국어 글꼴이 사전 설치되어 있지 않으므로 수동으로 설치
+
+!sudo apt-get install -y fonts-nanum # 'NanumBarunGothic' 글꼴을 설치
+!sudo fc-cache -fv # 글꼴 캐시를 새로 고치고
+!rm ~/.cache/matplotlib -rf
+
+
+- 한글 깨짐 방지 후 그래프 그리기:
+
+
+
+
+
