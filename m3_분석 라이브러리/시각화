@@ -219,6 +219,24 @@ e.g. x=np.arange(100)
      plt.ylabel('y')
      plt.show()
 
+
+<< 파이 차트 >>
+
+
+e.g. labels='young', 'teen','adult','mature','elder'
+     sizes=[64,115,432,81,22] # 각 라벨의 값
+     explode=(0,0,0.1,0,0) # 가장 큰 'adult' 부각되도록. 부각시키고 싶지 않으면 모두 0 혹은 explode 안쓰면 됨
+     
+     plt.figure(figsize=(5,5))
+     # autopct='%1.1f%%' : 최소 1자리, 소수점 아래 숫자의 최대 자리수  
+     plt.pie(sizes, explode=explode, labels=labels, autopct='%1.1f%%', shadow=True, startangle=90)
+     plt.axis('equal') # 차트가 원형으로 유지되도록 한다. 즉, 가로세로 비율이 같도록 설정 
+     plt.title("Titanic Age Group")
+     plt.show()
+
+
+
+
 =============================================================
 
 << Seaborn 사용하여 시각화 >>
@@ -251,7 +269,85 @@ e.g. x=np.arange(1,21,2)
      plt.ylabel('y', size=12)
      plt.legend(labels=['lineplot'])
 
+=============================================================
 
+<< 한 판에 상이한 데이터들 그래프 넣기 >>
+
+# 두개의 다른 종에 대한 분포를 한 그래프에서 나타내기:
+
+length_a=fish_multi.query('species=="A"')['length']
+length_b=fish_multi.query('species=="B"')['length']
+sns.histplot(length_a, bins=5, color='gray',kde=True)
+sns.histplot(length_b, bins=5, color='skyblue',kde=True)
+
+
+# boxplot으로 A, B 비교 한판에
+plt.figure(figsize=(5,3))
+sns.boxplot(x='species', y='length',data=fish_multi, color='skyblue')
+
+
+# 바이올린 플롯 : 
+# 박스 플롯과 커널 밀도 추정을 결합한 형태로 데이터의 형태를 좀 더 직관적으로 이해할 수 있게 해줌 
+# 커널 밀도추정의 결과를 y 축 방향에 추가하여 데이터가 퍼져있는 분산의 정도 파악
+plt.figure(figsize=(5,3))
+sns.violinplot(x='species',y='length', data=fish_multi,color='skyblue')
+
+# jointplot :
+# Assuming 'cov_data' is your DataFrame and it has columns 'x' and 'y'
+# x, y의 히스토그램과 kde,
+# x와 y 간의 산점도와 추세선, 오차의 범위까지 (추세선 위 아래로 있는 옅은 배경색 부분)
+# 을 한 번에 보여줌
+
+sns.jointplot(x='x',y='y', data=cov_data, kind='reg') # reg=regression. 회귀 보고 싶지 않으며 코드에서 제외시키면 됨
+plt.show()
+
+
+
+lmplot :
+# sns.lmplot 사용 예시
+sns.lmplot(x='x',y='y',data=data, hue='category')
+plt.title('sns.lmplot Example')
+plt.show()
+
+
+regplot :
+# sns.regplot 사용 예시
+plt.figure(figsize=(6,4))
+sns.regplot(x='x',y='y', data=data)
+plt.title('sns.regplot Example')
+plt.show()
+
+
+lineplot :
+plt.figure(figsize=(6,4))
+sns.lineplot(data=df_auto, x='model year', y='mpg', hue='origin', err_style='band', palette=['red','green','blue'])
+# err_style = 오차 범위
+# hue = 다중 그래프 사용할 경우 기준 변수
+
+
+pairplot :
+# 설정한 변수들을 1:1 관계로 x,y축에 놓고 그려줌
+# 히스토그램은 자기 자신인 경우, scatter는 자신과 타 변수의 관계
+sns.pairplot(df_auto[['mpg', 'weight','displacement']],palette='rainbow')
+
+=============================================================
+
+# countplot()
+# sns.set_style을 통한 그래프 미화 작업 
+
+plt.figure(figsize=(8,4))
+sns.set_style('whitegrid')
+sns.countplot(x='size', data=tips, hue='time', palette='bone') # 타임 별 테이블 사이즈 (인원수) 
+plt.title("count plot")
+plt.show()
+
+
+
+# sns.set_style('')로 위 바그래프 미화:
+sns.set_style({'font.family':'serif', 'font.serif':['Times New Roman']})
+sns.set_style('whitegrid')
+plt.style.use('bmh')
+sns.barplot(x='tip_pct', y='day', hue='time', data=tips, orient='h', errorbar=None, width=0.7) # dinner, lunch 타임 구분을 위해 hue='time 추가
 
 =============================================================
 
