@@ -252,9 +252,78 @@ tagname: 특정 태그명을 가진 요소를 선택합니다.
 ```
 
 
+==============================================
+
+
+- 불러온 html 문서를 파싱을 통해 다루기 쉽게 만들어야 함
+변수명=Beautifulsoup(html_doc, 'html.parser')
+
+<< 태그 찾기 >>
+*** 띄어쓰기 주의 필요 
+
+.find('찾을 내용') : 1개만 찾음 
+e.g. tag=soup.find(id='1234')
+
+.find_all('찾을 내용') : 해당되는 여러개의 태그를 찾음
+e.g. tag=soup.find_all(class_='abcde')
+
+
+.select('찾을 css 설렉터') : css 설렉터로 해당되는 것을 모두 불러옴. 
+                            id의 경우 '#id이름', 
+                            클래스의 경우 '.클래스이름' 처럼 
+                            불러올 정보 타입에 따라 특정 기호가 붙음
+e.g. u_skip_links=soup.select('#u_skip a') # id가 u_skip의 a 모두 찾기
+     for link in u_skip_links:
+         print(link.text) # 텍스트만
+
+.select_one('찾을 css 설렉터') : 상동
+                                ** 다만, 해당되는 것 중 첫번째꺼만 보여줌
+u_skip_links=soup.select('#u_skip')
+
+
+특정 id 아래 속한 id 찾기: 
+header_div=soup.select_one('#wrap #header')
+print(header_div.text if header_div else 'No header div found')
+==> wrap 의 하위 아이디 header 를 찾는데,
+    있으면 header에 속한 내용을 텍스트로 반환,
+    없다면 "No header div found' 내용을 대신 출력
+
+
+----- [         ] -----
+
+.get('href') : <a> 에 붙은 href (url) 불러오기
+변수명['href'] : <a> 에 붙은 href (url) 불러오기
+
+
+----- [ 속성으로 찾기 ] -----
+
+attrs={'속성':'속성 값'} 
+
+e.g. #  data-gfp-banner-size 속성을 가진 태그 추출
+        banners=soup.find_all(attrs={'data-gfp-banner-size':'830x130'})
+        for banner in banners:
+            print(banner.prettify())
+
+e.g. #  위 문제를 id로 찾아 추출 
+        banners=soup.find_all(attrs={'id':'ad-timeboard-response'})
+        for banner in banners:
+            print(banner.prettify())
 
 
 
+----- [ 부모/ 형제/ 자손 태그 찾기 ] -----
+
+.parent()
+.find_next_sibling()
+.find_previous_sibling()
+.find_next_siblings()
+.find_previous_siblings()
+.findChilrden()
+
+
+----- [ 출력 형식 정돈 ] -----
+
+.prettify() : 불러온 정보 출력 시 정돈된 포맷으로 제공 
 
 
 
