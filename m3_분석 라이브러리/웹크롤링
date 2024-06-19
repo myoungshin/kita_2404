@@ -251,8 +251,45 @@ tagname: 특정 태그명을 가진 요소를 선택합니다.
 
 ```
 
+==============================================
+
+## 크롤링(웹 크롤링)
+크롤링이란
+- 인터넷 상의 웹 페이지 데이터를 자동으로 수집하는 과정.
+- 웹 크롤링은 일반적으로 웹 스크래핑과 연관되며, 둘은 종종 혼용되지만 조금 다른 개념. 웹 크롤링은 웹 페이지를 탐색하고 데이터를 수집하는 반면, 웹 스크래핑은 그 페이지에서 특정 정보를 추출하는 데 중점을 둔다.
+- 크롤링은 스크래핑을 포함할 수 있다. 크롤링 과정에서 각 페이지를 방문할 때, 스크래핑을 통해 필요한 데이터를 추출할 수 있다.
+
+웹 크롤링에 사용되는 도구
+- BeautifulSoup: Python 라이브러리로, HTML 및 XML 문서를 구문 분석하고 데이터를 추출하는 데 사용.
+
+- Scrapy: 웹 크롤링을 위한 Python 프레임워크로, 효율적이고 확장성이 높은 크롤러를 쉽게 만들 수 있다.
+
+- Selenium: 웹 브라우저 자동화 도구로, JavaScript가 동적으로 로드되는 페이지를 크롤링할 때 유용.
+
+- Requests: Python의 HTTP 라이브러리로, 웹 페이지 요청을 쉽게 할 수 있다.
+
+웹 크롤링의 기본 과정
+- 크롤러 설정: 크롤러는 특정 웹 페이지를 시작점으로 설정. 이를 '시드(seed)'라고 부르며, 크롤러는 이 시드 URL에서 시작해 다른 페이지로 이동.
+
+- 페이지 요청: 크롤러는 HTTP 요청을 보내 웹 페이지를 요청. 이 과정에서 크롤러는 브라우저처럼 행동하여 웹 서버에서 페이지를 가져온다.
+
+- 데이터 추출: 웹 페이지가 응답되면, 크롤러는 페이지의 HTML을 분석하고 필요한 데이터를 추출. 이 과정에는 BeautifulSoup, Selenium 같은 라이브러리가 사용될 수 있다.
+
+- 링크 추출 및 큐잉: 크롤러는 현재 페이지에서 다른 페이지로 연결되는 링크를 추출하고, 이 링크들을 큐(queue)에 추가하여 다음 크롤링 대상으로 삼는다.
+
+- 반복: 이 과정은 정해진 규칙이나 종료 조건이 충족될 때까지 반복. 예를 들어, 특정 수의 페이지를 크롤링하거나, 주어진 도메인 내에서만 크롤링하도록 설정할 수 있다.
+
+웹 크롤링의 주의사항
+
+- 로봇 배제 표준(robots.txt): 많은 웹사이트는 robots.txt 파일을 통해 크롤러가 접근 가능한 부분과 접근을 제한하는 부분을 명시. 크롤러는 이 규칙을 준수해야 한다.
+
+- 저작권 및 법적 이슈: 모든 웹사이트의 콘텐츠는 저작권의 보호를 받는다. 따라서 크롤링을 통해 수집한 데이터를 어떻게 사용할지에 대한 법적 문제를 주의해야 한다.
+
+- 서버 부하: 지나친 크롤링은 웹 서버에 부하를 줄 수 있다. 크롤링 시에는 서버의 부담을 줄이기 위해 요청 간의 딜레이를 설정하는 것이 좋다.
 
 ==============================================
+
+<< BeautifulSoup 사용하여 웹크롤링 >>
 
 
 - 불러온 html 문서를 파싱을 통해 다루기 쉽게 만들어야 함
@@ -313,7 +350,8 @@ e.g. #  위 문제를 id로 찾아 추출
 
 ----- [ 부모/ 형제/ 자손 태그 찾기 ] -----
 
-.parent()
+.find_parent()
+.find_parents()
 .find_next_sibling()
 .find_previous_sibling()
 .find_next_siblings()
@@ -321,14 +359,54 @@ e.g. #  위 문제를 id로 찾아 추출
 .findChilrden()
 
 
+
 ----- [ 출력 형식 정돈 ] -----
 
 .prettify() : 불러온 정보 출력 시 정돈된 포맷으로 제공 
 
 
+============================================================
+
+<< 동적 컨텐츠 찾기 >>
+
+e.g. 
+# 동적 콘텐츠 로딩 : selenium 사용
+from selenium import webdriver
+from selenium.webdriver.chrome.options import Options
+from selenium.webdriver.common.by import By 
+import time
+
+options=Options() # Options 사용을 위한 객체 만들기
+options.add_argument("--start-maximized") # 브라우저 화면 최대화 
+options.add_experimental_option("detach", True) # 브라우저 화면을 열어서 유지해줌
+
+driver=webdriver.Chrome(options=options) # 웹드라이버 가동
+
+# Naver 페이지 열기 
+url='https://www.naver.com/'
+driver.get(url)
+
+# 페이지 로딩 대기
+time.sleep(2) # 2초 대기 (필요에 따라 조정)
+
+# 뉴스스탠드 링크 찾기
+
+# "F12" > 점선 네모 위에 커서 있는 아이콘 선택 > 네이버 홈 화면의 "뉴스스탠드" 클릭 > 해당되는 파트 자동 하이라이트 된 곳에 우측 클릭 >
+# "copy" 클릭 > "Copy selector" 클릭
+# copy selector 클릭하면 아래와 같이 경로가 뜸. 해당 경로를 find_element(By.CSS_SELECTOR, 'here') " 'here' " 위치에 붙여 넣기
+# newsstand > div.ContentHeaderView-module__content_header___nSgPg > div > ul > li:nth-child(1) > span > a:nth-child(1)
+
+try:
+    newsstand_link=driver.find_element(By.CSS_SELECTOR, '#newsstand > div.ContentHeaderView-module__content_header___nSgPg > div > ul > li:nth-child(1) > span > a:nth-child(1)')
+    print(newsstand_link.text)
+except:
+    print("뉴스스탠드 링크를 찾을 수 없습니다")
+
+# 브라우저 닫기
+driver.quit()
 
 
-
+*** xpath로 찾고 싶다면 By.CSS_SELECTOR 대신 By.XPATH 를 넣어주면 됨
 
 
  
