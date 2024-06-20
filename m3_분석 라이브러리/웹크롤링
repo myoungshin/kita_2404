@@ -500,6 +500,55 @@ print(bs)
 
 ============================================================
 
+개발자 도구상에서 .class로 확인한 정치기사 개수는 58개인 반면 select('.class')로 크롤링한 기사 개수는 38개인 이유:
+* 많은 사이트는 JavaScript를 사용하여 콘텐츠를 동적으로 로딩하는 반면 
+  requests + BeautifulSoup은 기본적으로 JavaScript를 실행하지 않기 때문에 
+  일부 js로 로딩되는 콘텐츠는 크롤링되지 않는다.
+* 페이지가 완전히 로드되기 전에 크롤링이 시도될 경우 일부 콘텐츠가 누락될 수 있다.
+* 웹페이지가 비동기 요청(Ajax)를 사용하여 데이터를 가져오는 경우 이 요청을 수동으로 처리하지 않는 한 
+  해당 데이터를 가져오지 못할 수 있다.
+
+
+
+
+============================================================
+
+<< 파이썬으로 원하는 뉴스 기사 키워드 입력하여 관련 기사 긁어오기 >>
+news_url.format(query): URL 문자열 내의 특정 부분을 query 변수의 값으로 대체
+- news_url 변수에는 포맷 문자열 'https://news.example.com/search?query={}'가 저장
+- news_url.format(query)는 포맷 문자열의 {} 부분을 query 변수의 값으로 대체
+- 결과적으로, 포맷팅된 URL은 'https://news.example.com/search?query=politics'가 된다.
+
+
+e.g. 
+from bs4 import BeautifulSoup
+import requests
+import re
+from datetime import datetime
+import os
+
+query=input('검색 키워드를 입력하세요 : ')
+query=query.replace(' ', '+')
+print(query)
+
+news_url='https://search.naver.com/search.naver?where=news&sm=tab_jum&query={}'
+
+# format(query) 메서드는 url 템플릿의 {} 부분을 query로 대체해줌
+req=requests.get(news_url.format(query))
+
+html=req.text
+soup=BeautifulSoup(html, 'html.parser')
+links=soup.select('.news_tit')
+# print(links)
+for link in links:
+    title=link.text
+    url=link.attrs['href']
+    print(title, '\n', url)
+
+
+
+============================================================
+
 << 동적 컨텐츠 찾기 >>
 - selenium 사용해서 데이터 가져오기
 - 데이터를 '요리'하기 위해서는 beautifulsoup을 주로 사용
