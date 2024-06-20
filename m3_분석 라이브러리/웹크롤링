@@ -295,7 +295,10 @@ tagname: 특정 태그명을 가진 요소를 선택합니다.
 - 불러온 html 문서를 파싱을 통해 다루기 쉽게 만들어야 함
 변수명=Beautifulsoup(html_doc, 'html.parser')
 
+
+
 << 태그 찾기 >>
+
 *** 띄어쓰기 주의 필요 
 
 .find('찾을 내용') : 1개만 찾음 
@@ -365,9 +368,142 @@ e.g. #  위 문제를 id로 찾아 추출
 .prettify() : 불러온 정보 출력 시 정돈된 포맷으로 제공 
 
 
+
+
+----- [ 이메일 형식 가져오기 ] -----
+
+e.g.
+import requests
+from bs4 import BeautifulSoup
+import re
+
+html = """
+<ul>
+    <li>Email: example@example.com</li>
+    <li>Contact: contact@sample.org</li>
+</ul>
+"""
+
+# 이메일 주소 추출
+email_pattern=r'[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+'
+emails=re.findall(email_pattern,html)
+print(emails)
+
+
+
+----- [ 구분자 추가 ] -----
+
+# 'separator' 매개변수를 사용하여 구분자를 지정
+single_text_node_with_separator=soup.find('div', class_='example').get_text(strip=True)
+multiple_text_nodes_with_separator=soup.find_all('div', class_='example')[1].get_text(separator=' | ',strip=True)
+
+print("Default separator (' | ') :") 
+print(single_text_node_with_separator) # ouptut: Single text node
+print(multiple_text_nodes_with_separator) # output: Multiple | text | nodes
+
+
+----- [ 정규식 표현 사용 ] -----
+
+<< 모든 단어 추출 >>
+
+# \b : 단어 경계, \w : 단어 문자
+words_list=''
+soup=BeautifulSoup(html, 'html.parser')
+words=re.findall(r'\b\w+\b', soup.text) # \b == 단어와 단어가 아닌 것 사이의 경계를 구분해줌
+for word in words:
+    words_list += word
+    words_list += ' '
+print(words_list)
+==> 결과: Sample Page Hello world 123 456 Hello 789 world Visit us at example com Contact us at info example com 
+
+
+<< 이메일 주소 추출 >>
+
+email_pattern=r'[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+'
+emails=re.findall(email_pattern,html)
+print("이메일 주소 추출:\n",emails,'\n')
+==> 결과 : info@example.com
+
+
+<< url 추출 >>
+
+url_pattern=r'https?://[^\s<>"]+|www\.[^\s<>"]+'
+urls=re.findall(url_pattern, html)
+for url in urls:
+    print(url)
+
+
+<< 숫자 추출 >>
+
+# \b : 단어 경계, \d : 숫자
+nums_list=''
+soup=BeautifulSoup(html, 'html.parser')
+nums=re.findall(r'\b\d+\b', soup.text) 
+for num in nums:
+    nums_list += num
+    nums_list += ' '
+print(nums_list)
+
+
+<< html 태그 내 텍스트 추출 >>
+
+tag_texts=re.findall(r'>([^<]+)<', html)
+text_lists=' '.join(text.strip() for text in tag_texts)
+text_lists
+
+
+tag_texts=re.findall(r'>([^<]+)<', html)
+text_lists=re.sub(r'\s+', ' ', text_lists)
+text_lists=text_lists.split()
+text_lists
+==> 결과 : 세로로 word by word로 출력됨
+
+
+<< 한글만 추출 >>
+e.g. 
+import re
+texts=response.text
+result=re.findall('[가-힣]+', texts)
+print(' '.join(result))
+
+
+
+
+============================================================
+
+<< 웹사이트에서 데이터 가져올 때 >>
+- 총 2가지 방법:
+    1. urllib 모듈 사용해서 불러오기
+    2. requests 모듈 사용해서 불러오기 
+
+----- [ urllib 사용 ] -----
+
+import urllib.request as rq # url을 다루기 위한 모듈
+# http, ftp, smtp 등과 같은 프로토콜을 사용하여 url을 열고 읽고 쓰는 기능을 제공
+
+url='http://news.naver.com/main/main.naver?mode=LSD&mid=shm&sid1=100'
+
+html=rq.urlopen(url)
+bs=BeautifulSoup(html, 'html.parser')
+print(bs)
+
+
+----- [ requests 사용 ] -----
+
+import requests 
+
+url='http://news.naver.com/main/main.naver?mode=LSD&mid=shm&sid1=100'
+html=requests.get(url)
+bs=BeautifulSoup(html.text, 'html.parser')
+print(bs)
+
+
 ============================================================
 
 << 동적 컨텐츠 찾기 >>
+- selenium 사용해서 데이터 가져오기
+- 데이터를 '요리'하기 위해서는 beautifulsoup을 주로 사용
+    ==> selenium도 사용은 할 수 있으나 시간이 더 오래 걸려서 bs를 더 많이 씀
 
 e.g. 
 # 동적 콘텐츠 로딩 : selenium 사용
