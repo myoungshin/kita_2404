@@ -731,6 +731,13 @@ e.g. file_data.to_csv('file_data.csv',index=None)
 https://www.data.go.kr/
 
 
+=============================================================
+범주형 데이터 만들 때 :
+
+pd.cut (원하는 수치로 자르기)
+pd.qcut (분위수로 자르기)
+
+
 
 
 
