@@ -549,10 +549,38 @@ for link in links:
 
 ============================================================
 
-<< 동적 컨텐츠 찾기 >>
+<< Selenium - 동적 컨텐츠 찾기 >>
+
 - selenium 사용해서 데이터 가져오기
 - 데이터를 '요리'하기 위해서는 beautifulsoup을 주로 사용
     ==> selenium도 사용은 할 수 있으나 시간이 더 오래 걸려서 bs를 더 많이 씀
+
+사용법: 
+- from selenium.webdriver.common.by import By
+
+- find_element(By.ID, " "): id 속성을 사용하여 접근
+- find_element(s)(By.CLASS_NAME, " "): 클래스를 사용하여 접근
+- find_element(s)(By.NAME, " "): name 속성을 사용하여 접근
+- find_element(s)(By.XPATH, " "): xpath 속성을 사용하여 접근
+- find_element(s)(By.LINK_TEXT, " "): 앵커태그(a 태그)에 사용되는 텍스트로 접근
+- find_element(s)(By.PARTIAL_LINK_TEXT, " "): 앵커태그(a 태그)에 사용되는 일부 텍스트로 접근
+- find_element(s)(By.TAG_NAME, " "): 태그를 사용하여 접근
+- find_element(s)(By.CSS_SELECTOR, " "): CSS 선택자를 사용하여 접근
+
+- driver.forward() : 앞으로 이동
+- driver.refresh() : 페이지 리프레시
+- driver.back() : 뒤로 이동
+- time.sleep(숫자) : '숫자'만큼 쉬기
+- driver.find_element(By.OOO, 'OOO').click() : OOO 을 찾아서 클릭
+- send_keys('입력창에 입력할 내용') : 입력창에 원하는 내용 입력
+- send_keys(Keys.ENTER) : 입력창에 입력한 내용 실행 
+- 변수명.get_attribute('속성이름') : find_element로 찾은 것의 특정 속성 가져오기
+    e.g. elems=driver.find_elements(By.TAG_NAME, 'a')
+         for e in elems:
+             print(e.get_attribute('href'))
+
+
+----- [ selenium 사용 예시 ] -----
 
 e.g. 
 # 동적 콘텐츠 로딩 : selenium 사용
@@ -594,4 +622,120 @@ driver.quit()
 *** xpath로 찾고 싶다면 By.CSS_SELECTOR 대신 By.XPATH 를 넣어주면 됨
 
 
- 
+============================================================
+
+<< Javascript >>
+
+
+Javascript 선택자 : https://hianna.tistory.com/485
+
+1. getElementById()
+ - 파라미터로 찾으려는 id를 전달하여, 해당 element를 찾을 수 있습니다. 
+ - id는 유일한 값이므로, 하나의 element만 리턴합니다.
+2. getElementsByClassName()
+ - 클래스 이름으로 element를 찾아서,이 클래스 이름을 가지는 모든 element 목록을 리턴합니다.
+ - 이 함수의 이름을 자세히 보면 getElementsByClassName으로 Element's'가 복수 형태인 것은 이 함수가 목록을 리턴하기 때문입니다.
+3. getElementByTagName()
+ - 위 코드는 'div' 태그를 가지는 모든 element 목록을 찾아줍니다.
+ - 이 함수 역시, 다수의 element를 리턴하기 때문에 함수명에 복수형의 'elements'가 포함되어 있습니다.
+4. querySelector()
+ - DOM에서 원하는 element를 찾기 위해서 querySelector() 를 사용할 수도 있는데, 이 함수는 파라미터로 입력받은 CSS선택자를 사용해서, element를 찾아줍니다.
+ - querySelector() 함수는, 파라미터로 입력받은 CSS 선택자로 찾은 여러개의 element 중 첫번째 element를 리턴합니다.
+ - 태그 이름으로 element를 찾을 때는 태그명을 문자열로 넘겨줍니다.위 예제는 div태그를 가지는 element 중 첫번째 element를 리턴합니다.
+5. querySelectorAll()
+ - 사용법은 querySelector() 와 같습니다. 다만, querySelectorAll()은 이름에서 알수 있듯이, CSS선택자(파라미터로 넘겨준)로 찾은 모든 element 목록을 리턴합니다.
+
+
+e.g 1) 
+----- [ DOM 요소 선택 및 텍스트 추출 ] -----
+
+from selenium import webdriver
+
+driver=webdriver.Chrome()
+driver.get('http://books.toscrape.com/')
+
+# 첫 번째 책의 제목을 추출
+book_title=driver.execute_script("return document.querySelector('article.product_pod h3 a').innerText;")
+# article 태그 안에 'product_pod' 클래스의 하위 요소들 중 h3 의 a 태그에 있는 innertext 를 가져오기 
+# <a href="catalogue/a-light-in-the-attic_1000/index.html" title="A Light in the Attic">A Light in the ...</a>
+
+print("First book title: ", book_title)
+driver.quit()
+
+
+e.g.2)
+----- [  다수의 요소 선택 및 데이터 추출 ] -----
+driver=webdriver.Chrome()
+driver.get('http://books.toscrape.com/')
+
+# 모든 책 제목 추출
+book_titles=driver.execute_script("""
+    var elements=document.querySelectorAll('article.product_pod h3 a');
+    var data=[];
+    elements.forEach(function(element) {
+    data.push(element.innerText);
+    });
+    return data;
+    """)
+print("Book titles: ", book_titles)
+time.sleep(3)
+driver.quit()
+
+
+e.g.3)
+----- [ DOM 요소 선택 및 속성 추출 ] -----
+
+# 속성은 .getAttribute('속성이름') 사용
+from selenium import webdriver
+
+driver=webdriver.Chrome()
+driver.get('http://books.toscrape.com/')
+
+# 첫 번째 책의 url을 추출
+book_url=driver.execute_script("return document.querySelector('article.product_pod h3 a').getAttribute('href');")
+print("First book url: ", book_url)
+driver.quit()
+
+
+e.g.4) 
+----- [ 스크롤 이벤트 트리거 ] -----
+
+driver=webdriver.Chrome()
+driver.get('http://books.toscrape.com/')
+
+# 페이지 맨 아래로 스크롤
+driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")
+time.sleep(5)
+driver.quit()
+
+
+e.g.5)
+----- [ 클릭 이벤트 트리거 ] -----
+
+import time
+driver=webdriver.Chrome()
+driver.get('http://books.toscrape.com/')
+
+# 첫번째 책의 링크 클릭
+driver.execute_script("document.querySelector('article.product_pod h3 a').click();")
+time.sleep(2)
+driver.quit()
+
+
+e.g.6)
+----- [ 스타일 변경 ] -----
+
+driver=webdriver.Chrome()
+driver.get('http://books.toscrape.com/')
+
+# 첫번째 책의 배경색 변경
+driver.execute_script("document.querySelector('article.product_pod').style.backgroundColor='yellow';")
+time.sleep(3)
+driver.quit()
+
+
+
+
+
+
+
