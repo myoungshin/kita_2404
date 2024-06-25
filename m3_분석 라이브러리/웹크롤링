@@ -734,6 +734,61 @@ time.sleep(3)
 driver.quit()
 
 
+===================================
+
+<< JavaScript >>
+- document.getElementById(id) : 특정 ID를 가진 요소를 선택합니다.
+- document.getElementsByClassName(className) : 특정 클래스 이름을 가진 요소를 선택합니다.
+- document.getElementsByTagName(tagName) : 특정 태그 이름을 가진 요소를 선택합니다.
+- document.querySelector(selector) : CSS 선택자를 사용하여 첫 번째 일치하는 요소를 선택합니다.
+- document.querySelectorAll(selector) : CSS 선택자를 사용하여 일치하는 모든 요소를 선택합니다.
+- element.innerText : 요소의 텍스트 콘텐츠를 설정하거나 가져옵니다.
+- element.innerHTML : 요소의 HTML 콘텐츠를 설정하거나 가져옵니다.
+- element.value : 입력 필드의 값을 설정하거나 가져옵니다.
+- element.style.property : 요소의 CSS 스타일 속성을 설정합니다.
+- element.click() : 요소를 클릭합니다.
+- element.focus() : 요소에 포커스를 설정합니다.
+- element.blur() : 요소에서 포커스를 제거합니다.
+- window.scrollTo(x, y) : 페이지를 지정된 좌표로 스크롤합니다.
+- window.scrollBy(x, y) : 현재 위치에서 지정된 거리만큼 페이지를 스크롤합니다.
+- alert(message) : 경고창을 표시합니다.
+- confirm(message) : 확인창을 표시하고 사용자의 응답을 반환합니다.
+- prompt(message, default) : 입력창을 표시하고 사용자의 입력을 반환합니다.
+- form.submit() : 폼을 제출합니다.
+- form.reset() : 폼을 초기화합니다.
+
+
+HTML 안에서 JavaScript를 쓰려면 <script> 탭으로 감싸야함
+
+e.g. <!DOCTYPE html>
+     <html>
+       <head>
+         <title>Input Field Example</title>
+       </head>
+       <body>
+         <h1>Fill the Input Field</h1>
+         <input type="text" id="inputField" value="initial value" />
+         <button id="submitButton">Submit</button>
+    
+         <script>
+           document.getElementById("submitButton").addEventListener("click", function () {
+             alert("Input field value: " + document.getElementById("inputField").value);
+           });
+         </script>
+       </body>
+     </html>
+
+** JavaScript 부분 해석: 
+    addEventListener : 클릭하면 function 을 실행하라
+        ==> function() == alert 를 띄워라
+                ==> alert 내용은: Input field value: initial value
+
+
+.target {} : 태겟 클래스에 대해서 {} 안의 내용대로 설정하라는 뜻
+
+
+
+
 
 
 
