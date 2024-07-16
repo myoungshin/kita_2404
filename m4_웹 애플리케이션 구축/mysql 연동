@@ -141,6 +141,14 @@ connection.commit()
 
 ===============================================
 
+파이썬과 db 연동하여 사용하다 이전 사용 내역이 남아서 db 에러 생기는 경우 있음
+이 경우 db 들어가서 table 기록 확인하고
+alembic 어쩌고가 있으면 그 부분 삭제해 줘야 함. 
+삭제 방법은 :
+1. 파이썬에서 select*from alembic version 을 쳐서 버전 넘버 확인하고
+2. db에다가 하기 쿼리 넣어서 실행:
+    DELETE FROM alembic_version WHERE version_num = '버전 넘버'
+
 
 
 
