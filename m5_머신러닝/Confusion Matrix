@@ -18,7 +18,7 @@
   5. ROC AUC (Receiver Operating Characteristics - Area Under Curve)
 
 정확도 : 모델의 전체 데이터 중 양성/음성에 대한 예측 정답율
-        = (TP+FN)/(TP+FP+FN+TN)
+        = (TP+TN)/(TP+FP+FN+TN)
 
 정밀도 : 양성으로 예측된 데이터 중 실제로 양성인 데이터의 비율
         = TP/(TP+FP)
