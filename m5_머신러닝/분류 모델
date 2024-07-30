@@ -14,3 +14,33 @@
   -- 
   from sklearn.datasets import load_breast_cancer
 
+
+======================================================
+
+
+
+
+
+======================================================
+
+----- [ 이상치 확인 및 제거 ] -----
+
+# Calculate IQR for the target variable
+Q1 = df['Target'].quantile(0.25)
+Q3 = df['Target'].quantile(0.75)
+IQR = Q3 - Q1
+
+# Define the bounds for outliers
+lower_bound = Q1 - 1.5 * IQR
+upper_bound = Q3 + 1.5 * IQR
+
+# Identify the outliers
+outliers = df[(df['Target'] < lower_bound) | (df['Target'] > upper_bound)]
+
+# Remove the outliers
+df_no_outliers= df[(df['Target']>= lower_bound) & (df['Target']<=upper_bound)]
+
+======================================================
+
+
+
