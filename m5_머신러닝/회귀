@@ -1,1 +1,79 @@
+<< 회귀 모델 종류 >>
+- LinearRegression (sklearn.linear_model)
+- LogisticRegression (sklearn.linear_model)
+- Ridge (sklearn.linear_model)
+- Lasso (sklearn.linear_model)
+- ElasticNet (sklearn.linear_model)
 
+
+
+
+<< 회귀 모델 사용법 >>
+회귀 모델 또한 분류 모델 사용 방식에서 크게 다를 것은 없음.
+
+
+
+
+회귀계수 확인
+하이퍼 파라미터
+
+
+
+======================================================
+
+<< 모델 평가 >>
+
+from sklearn.model_selection import cross_val_score
+from sklearn.metrics import mean_squared_error, mean_absolute_error, r2_score
+
+
+
+
+======================================================
+
+import numpy as np
+import pandas as pd
+from sklearn.datasets import fetch_california_housing
+from sklearn.linear_model import LinearRegression
+from sklearn.model_selection import train_test_split
+from sklearn.metrics import mean_squared_error, r2_score
+from sklearn.preprocessing import StandardScaler
+
+# 캘리포니아 주택 데이터셋 불러오기
+housing = fetch_california_housing()
+housing.data.shape
+X = housing.data
+y = housing.target
+# 데이터셋을 데이터프레임으로
+df = pd.DataFrame(X, columns=housing.feature_names)
+df['Target'] = y
+df.head()
+
+X=df.drop('Target', axis=1)
+y=df['Target']
+
+# 타겟 변수에 로그 변환 적용
+y_log=np.log1p(y)
+
+# 특성 스케일링
+scaler=StandardScaler()
+X_scaled=scaler.fit_transform(X)
+
+# 훈련 데이터와 테스트 데이터 분할
+X_train, X_test, y_train, y_test = train_test_split(X_scaled, y_log, test_size=0.2, random_state=0)
+
+# 선형 회귀 모델 생성 및 훈련
+lin_reg=LinearRegression()
+lin_reg.fit(X_train, y_train)
+
+# 테스트 데이터에 대한 예측 및 성능 평가
+y_pred=lin_reg.predict(X_test)
+mse=mean_squared_error(y_test, y_pred)
+rmse=np.sqrt(mse) # Calculate RMSE
+r2=r2_score(y_test, y_pred) # Calculate R2 score
+
+print("계수: ", lin_reg.coef_)
+print("절편: ", lin_reg.intercept_)
+print("평균 제곱 오차(MSE): ", mse)
+print("Root Mean Square Error (RMSE): ", round(rmse,2))
+print("R2 Score: ", round(r2,2))
