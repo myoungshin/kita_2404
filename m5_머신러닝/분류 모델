@@ -1,56 +1,293 @@
-분류 모델은 여러가지가 있는데, 분류 모델을 돌리기 위한 스텝은 거의 같음.
-1. 데이터 불러오기
-2. 데이터 분할 (훈련용과 평가용으로 나누기. 보통 8:2로 나눔)
-3. 데이터 표준화 (필요시)
-4. 하이퍼 파라미터 설정 
-5. 모델 생성 (어떤 모델로 돌릴지 혹은 여러개를 돌릴지 등)
-6. 모델 훈련 
-7. 모델 평가 (정확도, 정밀도, 재현율, f1 score, ROC AUC 등)
+<< 분류 모델 종류 >>
+
+분류 모델은 여러가지가 있음. 그 중 대표적으로: 
+- Logistic Regression (sklearn.linear_model)
+- Random Forest Classifier (sklearn.ensemble)
+- Decision Tree Classifier (sklearn.tree)
+- K Neighbors Classifier (sklearn.neighbors)
+- SVC (sklearn.svm)
+  ==> kernel='linear', 'poly', 'rbf' 등으로 다르게 설정 가능
+  ==> kernel은 SVM으로 데이터 분류를 위한 결정 경계라는 분류선을 어떤 형태로 그릴지에 관여함 
+- GaussianNB (sklearn.naive_bayes)
+- Gradient Boosting Classifier (sklearn.ensemble)
+- XGBClassifier (from xgboost import XGBClassifier)
+- LGBMClassifier (from lightgbm import LGBMClassifier)
+
+- Voting Classifier (sklearn.ensemble)
+  ==> 여러개의 분류 모델을 결합하여 최종 예측을 수행함. 
+  ==> Hard 와 Soft 보팅 방식으로 나뉨
+      ==> 하드 보팅: 다수결 원칙. 개별 모델의 예측 결과 중 가장 많이 나온 결과를 최종 예측으로 선택
+      ==> 소프트 보팅: 각 모델의 예측 확률을 평균 내어 가장 높은 확률을 가진 클래스를 최종 예측으로 선택
+                      (각 모델의 확신도(confidence)를 반영하여 더 정밀한 예측을 가능)
 
 
-<< 데이터 불러오기 >>
-사이킥에서 제공하는 연습용 데이터 많음.
-사이킥 데이터 사용할 경우 모듈 불러와야 함.
-  -- 
-  from sklearn.datasets import load_breast_cancer
+======================================================
+
+<< 분류 모델 사용 방법 >>
+
+분류 모델 종류는 다양하나 사용하는 방법 및 프로세스는 거의 같음
+공통적으로 :
+  1. 데이터 불러오기
+  2. 데이터 분할 (훈련용과 평가용으로 나누기. 보통 8:2로 나눔)
+  3. 데이터 표준화 (필요시)
+  4. 모델 생성 (어떤 모델로 돌릴지 혹은 여러개를 돌릴지 등)
+  5. 모델 훈련 
+  6. 모델 평가 (정확도, 정밀도, 재현율, f1 score, ROC AUC 등)
+
+이 외 관련 작업으로는 : 
+1. 하이퍼 파리미터 설정: 
+   - 학습 프로세스가 시작되기 전에 매개변수를 설정하여 의사결정 트리가 구축되는 방식에 영향을 주어 구조와 성능에 영향을 줌
+   - 최적의 하이퍼 파리미터를 뽑기 위해서 GridSearchCV (sklearn.model_selection) 사용하기도 함
+     ==> GridSearchCV 사용 시 테스팅하고 싶은 하이퍼 파리미터를 모두 넣어 돌리고, 최적의 모델과 하이퍼파리미터를 결정할 수 있도록 도움을 줌 
+2. 중요 속성 추출 
+   - 속성 중 y에 끼치는 영향력을 볼 수 있음 
+3. 시각화
+   - 트리, roc auc 그래프 등 모델 성능/결과에 대한 시각화 
 
 
 ======================================================
 
 << 데이터 분할 >> 
+
 1. 모듈 불러오기
 2. 학습/훈련용으로 데이터 구분하기
 
 from sklearn.model_selection import train_test_split 
-==> 학습과 훈련용 데이터를 구분하기 위해 모듈 불러오기 
-
+  ==> 학습과 훈련용 데이터를 구분하기 위해 모듈 불러오기 
 x_train, x_test, y_train, y_test = train_test_split(x, y, test_size=0.2, random_state=11)
-==> 학습 시키기 위해서 가지고 있는 데이터를 훈련용과 모델 검증/테스트용으로 구분해야함 
-==> 모델링 대상 데이터는 y 가 되고, y와 관계된 다른 속성 데이터는 x가 됨
-==> 훈련용과 검증용 데이터 비율은 test_size 로 조절해주고 (일반적으로 test_size=0.2 or 0.3으로 사용)
-==> 데이터가 랜덤하게 섞여 나뉘어질 수 있도록 random_state 를 사용하여 번호 매겨줌 (번호 마다 다르게 섞임)
+  ==> 학습 시키기 위해서 가지고 있는 데이터를 훈련용과 모델 검증/테스트용으로 구분해야함 
+  ==> 모델링 대상 데이터는 y 가 되고, y와 관계된 다른 속성 데이터는 x가 됨
+  ==> 훈련용과 검증용 데이터 비율은 test_size 로 조절해주고 (일반적으로 test_size=0.2 or 0.3으로 사용)
+  ==> 데이터가 랜덤하게 섞여 나뉘어질 수 있도록 random_state 를 사용하여 번호 매겨줌 (번호 마다 다르게 섞임)
 
 
 ======================================================
 
 << 데이터 표준화 >>
+
 1. 데이터 표준화를 위한 모듈 불러오기
 2. StandardScaler 객체화
 3. 스케일러 적용
 
-from sklearn.preprocessing import StandardScaler
-==> 모듈 불러오기
-
-scaler=StandardScaler() 
-==> 객체화
-
-x_scaled=scaler.fit_transform(x)
-==> x 에 스케일러 적용시키기
+from sklearn.preprocessing import StandardScaler # ==> 모듈 불러오기
+scaler=StandardScaler() # ==> 객체화
+x_scaled=scaler.fit_transform(x) # ==> x 에 스케일러 적용시키기
 
 
 ======================================================
 
-<< 하이퍼 파라미터 설정 >>
+<< 모델 생성, 훈련, 예측 >>
+
+1. 사용할 모델 모듈 불러오기 
+2. 모델 생성 및 하이퍼 파라미터 설정
+3. 모델 훈련
+4. 모델 예측
+
+e.g. Random Forest classifier 사용시:
+    from sklearn.ensemble import RandomForestClassifier # 모델 모듈 불러오기
+    model=RandomForestClassifier() # 모델 생성 및 하이퍼 파라미터 직접 설정
+        ==> 모델에 하이퍼 파라미터 설정하여 학습 훈련에 영향 줄 수도 있음
+        ==> 하이퍼 파리미터 설정은 해당 모델명( )의 괄호 안에 넣거나 GridSearchCV 사용
+            e.g. model=RandomForestClassifier(n_estimators=100, cv=3)
+    model.fit(x_train, y_train) # 모델 훈련
+    y_pred=model.predict(x_test) # 모델 예측 
+    y_proba=model.predict_proba(x_test)[:, 1] # 확률값을 예측 
+        ==> [:, 1]는 이 2차원 배열에서 두 번째 열(즉, 클래스 1에 대한 예측 확률)을 선택하는 것을 의미
+            즉, 클래스 1일 확률을 추출 (양성)
+
+======================================================
+
+<< 모델 평가 >>
+
+- 분류 모델에 대한 평가 지표로는 크게 5가지가 사용되며 관련 모듈 불러와야 함:
+  1. 정확도 (accuracy)
+  2. 정밀도 (precision)
+  3. 재현율 (recall)
+  4. f1 score 
+  5. ROC AUC
+
+모듈 불러오기:
+from sklearn.metrics import accuracy_score, precision_score, recacll_score, f1_score, roc_auc_score, classification_report, confusion matrix
+** classification_report 를 사용하면 precision, recall, f1_score를 한 판에 볼 수 있음.
+** confusion matrix 는 아래와 같이 매트릭스 형태로 True Positive, False Negative, False Positive, True Negative의 수를 제공.
+      TP FN
+      FP TN
+   ==> 따라서, 어떤 클래스가 다른 클래스로 잘못 예측되는지 분석할 수 있음 이를 기반으로 모델의 개선 방향을 찾을 수 있음
+
+
+e.g. 
+    accuracy=accuracy_score(y_test, y_pred) # 정확도
+    precision=precision_score(y_test, y_pred) # 정밀도
+    recall=recall_score(y_test, y_pred) # 재현율
+    f1=f1_score(y_test, y_pred) # f1
+    roc_auc=roc_auc_score(y_test, y_proba) # roc auc
+    confusion=confusion_matrix(y_test, y_pred) # confusion matrix
+    report=classification_report(y_test, y_pred) # classfication report
+
+    print(f'Accuracy: {accuracy:.3f}')
+    print(f'Precision: {precision:.3f}')
+    print(f'Recall: {recall:.3f}')
+    print(f'F1 Score: {f1:.3f}')
+    print(f'ROC AUC: {roc_auc:.3f}')
+    print(f'Confusion Matrix:\n{confusion}')
+    print(f'Report: {report}')
+
+======================================================
+
+<< 하이퍼 파라미터 설정 (GridSearchCV 사용) >>
+
+주요 하이퍼 파리미터:
+
+----- [ Random Forest ] -----
+n_estimators : 랜덤포레스트에 포함될 결정 트리의 개수를 지정
+               기본값: 100
+               트리의 개수가 많을 수록 모델의 안정성과 성능은 향상될 수 있으나 연산 비용도 증가함
+max_depth : 각 트리의 최대 깊이를 설정
+            기본값: None (리프 노드가 순수해질 때까지 또는 min_samples_split보다 적은 샘플을 가질 때까지 계속 분할)
+            깊이가 깊을수록 모델이 복잡해지고 과적합할 가능성이 커짐
+min_samples_split : 내부 노드를 분할하는 데 필요한 최소 샘플 수
+                    기본값: 2
+                    큰 값은 과적합을 방지하는 데 도움을 줌
+min_samples_leaf : 리프 노드에 있어야 하는 최소 샘플 수
+                   기본값: 1
+                   큰 값은 과적합을 방지하고, 트리의 일반화 능력을 향상
+max_features : 각 분할에서 고려할 최대 특성 수
+               옵션: auto, sqrt, log2, 또는 정수 값
+               기본값: auto (모든 특성을 사용)
+               특성 수가 적을수록 모델의 다양성이 증가하지만, 너무 적으면 성능이 떨어질 수 있음
+
+----- [ Logistic Regression ] -----
+max_iter : 로지스틱 회귀 모델이 데이터에 대해 수렴하지 ㅇ낳을 때 반복 횟수를 늘려 해결 가능
+           기본값: 100
+solver : 'lbfgs (Limited-memory Broyden-Fletcher-Goldfarb-Shanno)'
+          ** 큰 데이터셋과 많은 특성을 처리할 때 유용
+          ** 메모리 사용을 최소화
+random_state : 모델의 학습 결과를 재현 가능하게 하기 위해 설정. 이는 실험을 반복하고 결과를 비교할 때 유용
+C: 정규화 강도를 제어하는 역수. 값이 작을수록 강한 정규화를 적용
+
+
+----- [ Decision Tree Classifier ] -----
+criterion : 'gini' 와 'entropy' 사용 가능
+            ==> gini 계수가 낮을 수록 불순물이 적다는 뜻 (즉, 분류가 더 잘 되었다는 뜻)
+
+
+
+
+
+
+
+penality : l1, l2, Elastic Net
+
+
+======================================================
+
+<< 중요 속성 추출 >>
+
+# 중요 속성 추출 코드
+importances=best_rf.feature_importances_
+indices=np.argsort(importances)[::-1]
+
+# 중요 속성 시각화
+plt.figure(figsize=(10,6))
+plt.title("Feature Importances")
+plt.bar(range(x_train.shape[1]),importances[indices], align="center")
+plt.xticks(range(x_train.shape[1]), cancer.feature_names[indices], rotation=90)
+    ==> 눈금 위치와 레이블 설정 내용임.
+          plt.xticks(ticks, labels, rotation) 형태로 사용됨.
+          ==> range(x_train.shape[1]): x축에 눈금을 x_train의 특징 개수만큼 생성
+          ==> cancer.feature_names[indices]: 각 눈금에 대응하는 레이블로, 중요도에 따라 정렬된 특징 이름 사용
+          ==> rotation=90: 레이블을 90도 회전하여 세로로 표시 (긴 레이블도 서로 겹치지 않고 잘 보일 수 있음)
+plt.xlim([-1, x_train.shape[1]])
+    ==> x축 조정 내용임. 
+          plt.xlim(xmin, xmax) 형태로 사용됨.
+          ==> 위의 경우 x축의 범위를 -1에서 x_train.shape[1]까지로 설정하여, x축이 0부터 시작하는 대신 약간의 여유 공간을 추가
+plt.show()
+
+
+======================================================
+
+<< 시각화 >>
+
+----- [ Confusion matrix 시각화 ] -----
+
+from sklearn.svm import SVC
+from sklearn.metrics import classification_report, confusion_matrix
+import matplotlib.pyplot as plt
+import seaborn as sns
+
+# 선형 커널 SVC 모델 생성 및 학습
+rbf_svc =SVC(kernel='rbf', random_state=42)
+rbf_svc.fit(x_train, y_train)
+
+# 예측
+y_pred_rbf=rbf_svc.predict(x_test)
+
+# 성능 평가
+print("Linear RBF SVC")
+print(confusion_matrix(y_test, y_pred_rbf))
+print(classification_report(y_test, y_pred_rbf))
+
+# 시각화
+plt.figure(figsize=(6,4))
+sns.heatmap(confusion_matrix(y_test, y_pred_rbf), annot=True, fmt='d', cmap='Blues', cbar=False)
+plt.title("Confusion Matrix - RBF Kernel")
+plt.xlabel("Predicted")
+plt.ylabel("True")
+plt.show()
+
+
+
+----- [ Tree 시각화 ] -----
+
+from sklearn.datasets import load_iris
+from sklearn.tree import DecisionTreeClassifier
+from sklearn import tree
+import matplotlib.pyplot as plt
+
+# iris 데이터셋을 불러오기
+iris = load_iris()
+x_iris = iris.data
+y_iris = iris.target
+
+# Decision Tree 모델 학습
+dt_clf = DecisionTreeClassifier()
+dt_clf.fit(x_iris, y_iris)
+
+# 의사결정나무 시각화
+plt.figure(figsize=(20,15))
+tree.plot_tree(dt_clf, filled=True, # filled=True 각 노드를 클래스에 따라 다른 색으로 채움
+               feature_names=iris.feature_names,
+               class_names=iris.target_names,
+               rounded=True, fontsize=14)
+plt.show()
+plt.close()
+
+
+
+----- [ 로지스틱 함수 시각화 ] -----
+
+import matplotlib.pyplot as plt
+import numpy as np
+
+#  로짓 함수 정의
+def logit_function(x):
+    return 1/(1+np.exp(-x))
+
+# 입력 값 범위
+x=np.linspace(-10,10,1000) # 1000은 1000개의 데이터임
+
+# 로짓 함수 적용
+y=logit_function(x)
+
+# 시각화
+plt.figure(figsize=(6,4))
+plt.plot(x,y)
+plt.title("Logistic Regression: Logit Function")
+plt.xlabel("Input value (x)")
+plt.ylabel("Input value (y)")
+plt.grid(True)
+plt.show()
+
 
 
 
