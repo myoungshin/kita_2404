@@ -1,1 +1,72 @@
+<< 차원 축소 >>
+차원 축소: 매우 많은 속성으로 구성된 다차원 데이터 세트의 차원을 축소하여 새로운 차원의 데이터 세트를 생성함
+- 차원이 증가할수록 데이터 포인트 간의 거리가 기하급수적으로 멀어지게 되고 희소한 구조를 가지며 예측 신뢰도가 떨어짐
+- 선형 모델에서는 입력 변수간의 상관관계가 높을 경우 다중공선성 문제로 모델의 예측 성능이 저하될 수 있음 
 
+따라서, 차원 축소를 통해 데이터를 잘 설명할 수 있는 잠재적인 요소를 추출하여 모델 학습 진행
+
+- 차원 축소 알고리즘으로는 대표적인 게 3개 있음:
+  1. PCA (Principal Component Analysis)
+  2. SVD (Single Value Decomposition)
+  3. NMF (Non-negative Matrix Factorization)
+
+
+==============================================================
+
+PCA와 SVD 는 사용 방법이 유사
+
+1. 데이터 불러오기 (모듈 또한 불러 와야함)
+2. 데이터 표준화 (필요시)
+3. 모델 생성
+4. 컴포넌트 변환
+5. 예측 수행/ 시각화
+
+e.g. 
+    from sklearn.decomposition import TruncatedSVD, PCA # <== 모듈 불러오기
+    from sklearn.datasets import load_iris
+    import matplotlib.pyplot as plt
+    from sklearn.preprocessing import StandardScaler
+
+    # iris 데이터 불러오기
+    iris = load_iris()
+    iris_ftrs = iris.data
+    
+    # iris 데이터를 StandardScaler로 변환
+    scaler = StandardScaler()
+    iris_scaled = scaler.fit_transform(iris_ftrs)
+    
+    # 2개의 주요 component로 TruncatedSVD 변환
+    tsvd = TruncatedSVD(n_components=2)
+    tsvd.fit(iris_scaled)
+    iris_tsvd = tsvd.transform(iris_scaled)
+
+    # 2개의 주요 component로 PCA 변환
+    pca=PCA(n_components=2)
+    iris_pca=pca.fit_transform(x_scaled)
+    
+    # SVD와 PCA 그래프 동시 출력:
+    fig, axs=plt.subplots(figsize=(16,8), ncols=2, nrows=1)
+    # SVD 그래프
+    axs[0].scatter(x=iris_svd[:, 0], y=iris_svd[:, 1], c=iris.target)
+    axs[0].set_title('Truncated SVD Transformed')
+    axs[0].set_xlabel('Component 1')
+    axs[0].set_ylabel('Component 2')    
+
+    # PCA 그래프
+    axs[1].scatter(x=iris_pca[:,0], y=iris_pca[:,1], c=iris.target)
+    axs[1].set_title('PCA Transformed')
+    axs[1].set_xlabel('Component 1')
+    axs[1].set_ylabel('Component 2')
+    
+    plt.show()
+
+    # cross_val_score() 로 분류 예측 수행:
+    model = RandomForestClassifier(n_estimators=300, random_state=150)
+
+    pca=PCA(n_components=2)
+    iris_pca=pca.fit_transform(x_scaled)
+
+    scores_pca = cross_val_score(model, iris_pca, y_target, scoring='accuracy', cv=3)
+    
+    print('CV=3인 경우의 PCA 변환된 개별 Fold 세트별 정확도:', scores_pca)
+    print('PCA 변환 데이터 세트 평균 정확도:{0:.4f}'.format(np.mean(scores_pca)))    
