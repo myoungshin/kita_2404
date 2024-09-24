@@ -49,7 +49,83 @@
     - 에지 검출 ==> cv2.Canny()
 
 
+==========================================================
+
+<<< 이미지 모자이크 처리 >>>
+
+--- [ 모자이크 사용자 함수 ] ---
+import cv2
+def mosaic (img, rect, size):
+  (x1, y1, x2, y2) = rect
+  w = x2 - x1
+  h = y2 - y1
+  i_rect = img [y1 : y2, x1 : x2]
+
+  i_small = cv2.resize(i_rect, (size, size))
+  i_mos = cv2.resize(i_small, (w,h), interpolation = cv2.INTER_AREA)
+
+  img2 = img.copy()
+  img2[y1 : y2, x1 : x2] = i_mos
+  return img2
 
 
+--- [ 모자이크 수동 처리 방법 ] ---
+1. 필요한 모듈 불러오기
+2. 이미지 읽기
+3. 모자이크 처리
+4. 이미지 출력
+
+e.g.
+# 1. 모듈 불러오기 
+import cv2
+from mosaic import mosaic as mosaic # <== 모자이크 사용자 함수 불러오기
+
+# 2. 이미지 읽기
+img=cv2.imread('이미지 경로')
+
+# 3. 모자이크 처리
+mos=mosaic(img, (0,50,250,450),50) # <== 모자이크 처리할 부분. 가장 끝의 50은 축소 사이즈.
+
+# 4. 이미지 출력
+cv2.imwrite('모자이크 이미지 저장할 경로 및 파일명.png', mos)
+plt.imshow(cv2.cvtColor(mos, cv2.COLOR_BGR2RGB))
+plt.show()
 
 
+--- [ 모자이크 자동 처리 방법 ] ---
+1. 모듈 불러오기
+2. 캐스케이드 파일 지정해서 검출기 생성
+3. 이미지 읽기
+4. 이미지 그레이스케일로 변환
+5. 얼굴 검출
+6. 인식한 부분에 모자이크 처리하기
+7. 이미지 출력
+
+e.g. 
+# 1. 모듈 불러오기
+import matplotlib.pyplot as plt
+import cv2
+from mosaic import mosaic as mosaic
+
+# 2. 캐스케이드 파일 지정해서 검출기 생성하기 
+cascade_filepath='저장경로/haarcascade_frontalface_alt.xml'
+cascade=cv2.CascadeClassifier(cascade_filepath)
+
+# 3. 이미지 읽어오기
+img=cv2.imread('저장경로/people.PNG')
+
+# 4. 이미지 그레이스케일로 변환
+img_gray=cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+
+# 5. 얼굴 검출:
+face_list=cascade.detectMultiScale(img_gray, minSize=(20,20))
+if len(face_list)==0: quit()
+
+# 6. 인식한 부분에 모자이크 처리하기
+for (x,y,w,h) in face_list:
+    img=mosaic(img, (x,y,x+w,y+h),10)
+
+# 7. 이미지 출력하기
+cv2.imwrite('저장경로/people-mosaic.PNG', img)
+plt.imshow(cv2.cvtColor(img, cv2.COLOR_BGR2RGB))
+plt.show()
